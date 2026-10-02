@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Helix Store: Minecraft Animation Templates for Premiere Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#2a2f38;--bg2:#222730;--panel:#c6c6c6;--hi:#fff;--lo:#555;--slot:#8b8b8b;--slotlo:#373737;--ink:#2b2b2b;--ench:#8a4dff;--grass:#5fae3c;--gold:#f2c14e;--text:#e9ecf1;--mute:#a4acba;
+--Text:#3f8f5a;--Object:#c07a2c;--UI:#3a7bd5;--Scene:#b24a6b;
+--disp:"Pixelify Sans","Trebuchet MS",system-ui,sans-serif;--body:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*:before,*:after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.55 var(--body);
+background-image:linear-gradient(var(--bg2) 1px,transparent 1px),linear-gradient(90deg,var(--bg2) 1px,transparent 1px);background-size:48px 48px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.panel{background:var(--panel);color:var(--ink);border:3px solid #000;box-shadow:inset 3px 3px 0 var(--hi),inset -3px -3px 0 var(--lo)}
+.slot{background:var(--slot);box-shadow:inset 3px 3px 0 var(--slotlo),inset -3px -3px 0 var(--hi)}
+header{padding:20px 0 8px}header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{font:700 24px var(--disp)}
+.btn{display:block;font:700 17px var(--disp);padding:9px 18px;text-decoration:none;cursor:pointer;text-align:center;background:var(--grass);color:#10230a;border:3px solid #000;box-shadow:inset 3px 3px 0 #9be07a,inset -3px -3px 0 #3b7a22}
+.btn:hover{background:#6fc247}.btn.off{background:#9a9a9a;color:#3a3a3a;cursor:default;box-shadow:inset 3px 3px 0 #bdbdbd,inset -3px -3px 0 #6b6b6b}
+.btn.hd{display:inline-block}
+.hero{padding:44px 0 26px}.hero h1{font:700 clamp(36px,7vw,72px)/1 var(--disp);margin:0 0 16px;max-width:14ch}
+.hero p{max-width:54ch;color:var(--mute);font-size:18px;margin:0}
+h2{font:700 30px var(--disp);margin:0 0 6px}.sub{color:var(--mute);margin:0 0 20px}
+section{padding:28px 0}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.col{padding:16px;display:flex;flex-direction:column;gap:8px}
+.ico{aspect-ratio:2/1;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:8px}
+.ico i{background:var(--c);box-shadow:inset 2px 2px 0 rgba(255,255,255,.35),inset -2px -2px 0 rgba(0,0,0,.35)}
+.col h3{font:700 22px var(--disp);margin:0}.n{font-size:14px;color:#4a4a4a;margin:0}
+.col.best{background:#d9c7ff;outline:3px solid var(--ench);outline-offset:3px}
+.tag{font:700 13px var(--disp);background:var(--ench);color:#fff;padding:2px 8px;align-self:flex-start}
+.col .btn{margin-top:auto}
+.price{font:700 26px var(--disp);margin:0}.was{color:#5a5a5a;text-decoration:line-through;margin-left:8px;font-size:15px}
+.save{font:700 14px var(--disp);background:var(--grass);color:#10230a;padding:2px 8px;border:2px solid #000;margin-left:8px;white-space:nowrap}
+.prow{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+#chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:700 16px var(--disp);padding:6px 14px;border:3px solid #000;cursor:pointer;background:var(--slot);color:#fff;box-shadow:inset 3px 3px 0 var(--slotlo),inset -3px -3px 0 #b5b5b5}
+.chip[aria-pressed=true]{background:var(--ench)}
+.search{margin-left:auto;font:500 16px var(--body);padding:8px 12px;border:3px solid #000;background:#111;color:#fff;min-width:200px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{padding:12px;display:flex;flex-direction:column;gap:8px}
+.thumb{position:relative;aspect-ratio:16/9;overflow:hidden;isolation:isolate;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 80%,#000),color-mix(in srgb,var(--c) 45%,#000))}
+.thumb:before{content:"";position:absolute;inset:0;opacity:.18;background-image:linear-gradient(45deg,#000 25%,transparent 25%,transparent 75%,#000 75%),linear-gradient(45deg,#000 25%,transparent 25%,transparent 75%,#000 75%);background-size:24px 24px;background-position:0 0,12px 12px}
+.thumb span{position:relative;font:700 15px var(--disp);background:rgba(0,0,0,.55);padding:3px 10px}
+.thumb video,.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card h3{font:700 20px/1.15 var(--disp);margin:0}
+.meta{display:flex;justify-content:space-between;font-size:14px;color:#444;margin:0}
+.card .btn{font-size:16px;padding:8px 14px;margin-top:auto}
+.empty{grid-column:1/-1;padding:30px;text-align:center}
+footer{padding:36px 0 60px;color:var(--mute);font-size:14px}
+.admin{margin-top:30px;padding:16px;border:3px dashed var(--gold);color:var(--text)}
+.admin h3{margin:0 0 10px;font:700 20px var(--disp)}
+.admin .bar{margin-bottom:12px}.admin input{flex:1;min-width:140px;padding:9px;border:3px solid #000;background:#111;color:#fff;font:inherit}
+.admin button{padding:9px 14px;border:3px solid #000;background:var(--grass);font:700 15px var(--disp);cursor:pointer}
+#custom .panel{padding:18px;display:grid;gap:10px;max-width:640px}
+#custom input,#custom select,#custom textarea{width:100%;padding:9px;border:3px solid #000;background:#fff;color:#111;font:inherit}
+#custom textarea{min-height:110px;resize:vertical}#cm{font-size:14px;min-height:20px}
+@media(max-width:860px){.cols{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.cols{grid-template-columns:1fr}.search{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand">▦ Helix Store</div><span style="display:flex;gap:10px"><a class="btn hd" id="hl" href="#custom" style="background:#f2c14e;box-shadow:inset 3px 3px 0 #fff3b0,inset -3px -3px 0 #b8902f">Custom order</a><a class="btn hd" id="cb" target="_blank" rel="noopener">Open store</a></span></div></header>
+<main class="wrap">
+<div class="hero"><h1>Minecraft animations for your videos</h1><p>34 ready-made .mogrt templates for Adobe Premiere Pro. Drop one on your timeline, type your text, swap your images, and export. Prices in USD, one-time purchase.</p></div>
+<section id="collections"><h2>Collections</h2><p class="sub">Buy a whole category in one go, or the full bundle with everything.</p><div class="cols" id="cols"></div></section>
+<section id="templates"><h2>All templates</h2><p class="sub">Hover a card to play its preview.</p>
+<div class="bar"><div id="chips" role="group" aria-label="Filter by category"></div><input class="search" id="q" type="search" placeholder="Search templates" aria-label="Search templates"></div>
+<div class="grid" id="grid"></div></section>
+<section id="custom" hidden><h2>Need a custom animation?</h2><p class="sub">Tell me what you have in mind and I'll reply by email with a quote.</p>
+<div class="panel"><input id="cn" placeholder="Your name" autocomplete="name"><input id="ce" type="email" placeholder="Your email" autocomplete="email">
+<select id="ct"><option>Text animation</option><option>Object animation</option><option>UI animation</option><option>Full scene</option><option>Something else</option></select>
+<input id="cdl" placeholder="Deadline (optional)"><textarea id="cd" placeholder="Describe the animation you want"></textarea>
+<a class="btn" id="send" target="_blank" rel="noopener">Send request by email</a><div id="cm"></div></div></section>
+</main>
+<footer><div class="wrap">Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.</div></footer>
+<script>
+/*CAT*/const D={
+Object:[["3D Block",20,"159 KB"],["Custom Backdrop",10,"67 KB"],["Enchanted Book",10,"55 KB"],["Folding Minecraft Map",20,"2.5 MB"],["GUI Objective Pop Up",10,"48 KB"],["Hanging Minecraft Text On Backdrop",10,"74 KB"],["Item Breaking In Half",10,"38 KB"],["Item Breaking Like Glass",5,"16 KB"],["Item Showcase",15,"83 KB"],["Item Sideways Transition",5,"18 KB"],["Item Slots (Hotbar)",20,"1.6 MB"],["Line Item Transition",5,"23 KB"],["Map Travel",30,"2.4 MB"],["Paper Rollout Objective",15,"243 KB"],["Quest Scroll Info",15,"265 KB"],["Scroll Image Showcase",20,"627 KB"],["Window Pop",30,"20.7 MB"]],
+Text:[["2D Wiggling Minecraft Text",5,"28 KB"],["3D Intro Text",10,"46 KB"],["Discovery Overlay",5,"17 KB"],["Distorted Minecraft Text",5,"27 KB"],["Elimination Overlay",15,"80 KB"],["Enchanted Discovery Text",10,"60 KB"],["Minecraft Highlighted & Outlined Text",5,"18 KB"],["Minecraft POV Image & Text",5,"29 KB"],["NameTag & Arrow",5,"19 KB"],["Vanilla Minecraft Text Overlay",5,"14 KB"],["Victory Text",5,"17 KB"]],
+UI:[["Boss Full Stats",30,"5.0 MB"],["Crafting Recipe",15,"85 KB"],["Crafting Animation",25,"640 KB"],["Elemental Chooser",20,"1.4 MB"],["Hanging Rules",25,"9.9 MB"]],
+Scene:[["Join Minecraft",25,"1.4 MB"]]};/*END*/
+const P=[];for(const c in D)D[c].forEach(([name,price,size],idx)=>P.push({cat:c,idx,name,price,size:size||""}));
+const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const B=[
+{name:"Text Collection",key:"Text",price:49,cats:["Text"]},
+{name:"Object Collection",key:"Object",price:179,cats:["Object"]},
+{name:"UI & Scene Collection",key:"UI & Scene",price:99,cats:["UI","Scene"]},
+{name:"Full Bundle",key:"Full Bundle",price:299,cats:["Text","Object","UI","Scene"],best:1}];
+/*LINKS*/const LINKS={"Hanging Rules": "https://payhip.com/b/l2aV0", "Elemental Chooser": "https://payhip.com/b/ytoA2", "Crafting Animation": "https://payhip.com/b/CES6v", "Crafting Recipe": "https://payhip.com/b/rxWoF", "Boss Full Stats": "https://payhip.com/b/ciGON", "Victory Text": "https://payhip.com/b/G2knh", "Vanilla Minecraft Text Overlay": "https://payhip.com/b/3iGty", "NameTag & Arrow": "https://payhip.com/b/U5QjK", "Minecraft POV Image & Text": "https://payhip.com/b/NQzkE", "Minecraft Highlighted & Outlined Text": "https://payhip.com/b/jYckS", "Enchanted Discovery Text": "https://payhip.com/b/Bq1ZM", "Elimination Overlay": "https://payhip.com/b/S90YV", "Distorted Minecraft Text": "https://payhip.com/b/1x4lu", "Discovery Overlay": "https://payhip.com/b/AbeWM", "3D Intro Text": "https://payhip.com/b/yTsWM", "2D Wiggling Minecraft Text": "https://payhip.com/b/uV9av", "Join Minecraft": "https://payhip.com/b/86Owa", "Window Pop": "https://payhip.com/b/ZUNYS", "Scroll Image Showcase": "https://payhip.com/b/lOEsY", "Quest Scroll Info": "https://payhip.com/b/XIU3B", "Paper Rollout Objective": "https://payhip.com/b/Gx4jy", "Map Travel": "https://payhip.com/b/jTrXJ", "Line Item Transition": "https://payhip.com/b/4eP7h", "Item Slots (Hotbar)": "https://payhip.com/b/muTA5", "Item Sideways Transition": "https://payhip.com/b/2k7VK", "Item Showcase": "https://payhip.com/b/wFJsE", "Item Breaking Like Glass": "https://payhip.com/b/tbRlz", "Item Breaking In Half": "https://payhip.com/b/uk8IE", "Hanging Minecraft Text On Backdrop": "https://payhip.com/b/E6IjA", "GUI Objective Pop Up": "https://payhip.com/b/YZxBf", "Folding Minecraft Map": "https://payhip.com/b/Ty037", "Enchanted Book": "https://payhip.com/b/LEC7k", "Custom Backdrop": "https://payhip.com/b/YizD8", "3D Block": "https://payhip.com/b/Ynijx", "Text": "https://payhip.com/b/dm3pe", "Object": "https://payhip.com/b/UruZq", "UI & Scene": "https://payhip.com/b/0HR9P", "Full Bundle": "https://payhip.com/b/tDdo1"};let STORE_URL="https://payhip.com/HelixS";let CONTACT_EMAIL="mazentestin51@gmail.com";/*END2*/
+let cat="All",term="",OWNER=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const buy=(k,l)=>LINKS[k]?`<a class="btn" href="${esc(LINKS[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn off">Coming soon</span>`;
+function render(){
+ $("#cols").innerHTML=B.map(b=>{const g=P.filter(p=>b.cats.includes(p.cat)),tot=g.reduce((a,p)=>a+p.price,0);
+  const tiles=Array.from({length:12},(_,k)=>`<i style="--c:var(--${b.cats[k%b.cats.length]})"></i>`).join("");
+  return `<article class="panel col ${b.best?"best":""}">${b.best?'<span class="tag">Best value</span>':""}<div class="slot ico">${tiles}</div><h3>${b.name}</h3><p class="n">${g.length} templates</p><div class="prow"><p class="price">$${b.price}</p><span class="was">$${tot}</span><span class="save">Save $${tot-b.price}</span></div>${buy(b.key,"Buy bundle")}</article>`}).join("");
+ $("#chips").innerHTML=["All",...Object.keys(D)].map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${esc(c)}">${c==="All"?"All ("+P.length+")":c+" ("+D[c].length+")"}</button>`).join("");
+ drawGrid();
+ $("#cb").href=STORE_URL||"#";$("#cb").style.display=STORE_URL?"":"none";
+ $("#custom").hidden=!CONTACT_EMAIL;$("#hl").style.display=CONTACT_EMAIL?"":"none";
+}
+function drawGrid(){
+ const l=P.filter(p=>(cat==="All"||p.cat===cat)&&p.name.toLowerCase().includes(term));
+ $("#grid").innerHTML=l.length?l.map(p=>{const s=slug(p.name);return `<article class="panel card"><div class="slot" style="padding:6px"><div class="thumb" style="--c:var(--${esc(p.cat)})"><span>Preview coming</span><img src="thumbs/${s}.png" alt="" loading="lazy" onerror="this.remove()"><video src="previews/${s}.mp4" muted loop playsinline preload="metadata" onerror="this.remove()"></video></div></div><h3>${esc(p.name)}</h3><p class="meta"><span>${esc(p.cat)}</span><span>${p.size?esc(p.size)+" · ":""}.mogrt</span></p><p class="price">$${p.price}</p>${buy(p.name,"Buy")}</article>`}).join(""):`<div class="panel empty">No templates match "${esc(term)}". Try another word or choose All.</div>`;
+}
+$("#chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;cat=b.dataset.c;render()});
+$("#q").addEventListener("input",e=>{term=e.target.value.trim().toLowerCase();drawGrid()});
+$("#grid").addEventListener("pointerover",e=>{const v=e.target.closest(".card")?.querySelector("video");if(v)v.play().catch(()=>{})});
+$("#grid").addEventListener("pointerout",e=>{const v=e.target.closest(".card")?.querySelector("video");if(v){v.pause();v.currentTime=0}});
+$("#send").addEventListener("click",e=>{const g=i=>$(i).value.trim(),n=g("#cn"),m=g("#ce"),d=g("#cd");
+ if(!n||!/^\S+@\S+\.\S+$/.test(m)||!d){e.preventDefault();$("#cm").textContent="Please fill in your name, a valid email and a description.";return}
+ const body="Name: "+n+"\nEmail: "+m+"\nType: "+g("#ct")+"\nDeadline: "+(g("#cdl")||"-")+"\n\n"+d;
+ e.currentTarget.href="mailto:"+CONTACT_EMAIL+"?subject="+encodeURIComponent("Custom animation request from "+n)+"&body="+encodeURIComponent(body);
+ $("#cm").textContent="Your email app should open with the request ready to send. If it doesn't, email "+CONTACT_EMAIL+" directly.";});
+render();
+</script>
+</body>
+</html>
