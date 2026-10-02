@@ -96,9 +96,8 @@ button.btn{width:100%;border:3px solid #000}#custom textarea{min-height:110px;re
 <details class="panel"><summary>Does it work on Mac and Windows?</summary><p>Yes. <code>.mogrt</code> files work on both, as long as your Premiere Pro version is supported.</p></details>
 </section>
 <section id="custom"><h2>Need a custom animation?</h2><p class="sub">Tell me what you have in mind and I'll reply by email with a quote.</p>
-<div class="panel"><form id="cf" name="custom-order" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" style="display:grid;gap:10px">
-<input type="hidden" name="form-name" value="custom-order">
-<p hidden><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+<div class="panel"><form id="cf" name="custom-order" style="display:grid;gap:10px">
+<p hidden><label>Don't fill this out: <input name="_gotcha" tabindex="-1" autocomplete="off"></label></p>
 <input id="cn" name="name" placeholder="Your name" autocomplete="name" aria-label="Your name" required>
 <input id="ce" name="email" type="email" placeholder="Your email" autocomplete="email" aria-label="Your email" required>
 <select id="ct" name="type" aria-label="Animation type"><option>Text animation</option><option>Object animation</option><option>UI animation</option><option>Full scene</option><option>Something else</option></select>
@@ -148,9 +147,18 @@ $("#grid").addEventListener("pointerover",e=>{const v=e.target.closest(".card")?
 $("#grid").addEventListener("pointerout",e=>{const v=e.target.closest(".card")?.querySelector("video");if(v){v.pause();v.currentTime=0}});
 $("#grid").addEventListener("focusin",e=>{const v=e.target.closest(".card")?.querySelector("video");if(v)v.play().catch(()=>{})});
 $("#grid").addEventListener("focusout",e=>{const c=e.target.closest(".card");if(!c||c.contains(e.relatedTarget))return;const v=c.querySelector("video");if(v){v.pause();v.currentTime=0}});
+/* Contact form: paste your Formspree URL below (https://formspree.io/f/xxxxxxx) to send requests straight to your inbox.
+   While it is empty, the form opens the visitor's email app with the request filled in. */
+const FORM_ENDPOINT="https://formspree.io/f/mwlpdypp";
 $("#cf").addEventListener("submit",async e=>{e.preventDefault();
- const f=e.currentTarget,btn=$("#send"),m=$("#cm");btn.disabled=true;btn.textContent="Sending...";m.textContent="";
- try{const r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()});
+ const f=e.currentTarget,btn=$("#send"),m=$("#cm"),fd=new FormData(f);
+ if(fd.get("_gotcha"))return;
+ if(!FORM_ENDPOINT){
+  const body=["Name: "+fd.get("name"),"Email: "+fd.get("email"),"Type: "+fd.get("type"),"Deadline: "+(fd.get("deadline")||"-"),"","Description:",fd.get("description")].join("\n");
+  location.href="mailto:"+CONTACT_EMAIL+"?subject="+encodeURIComponent("Custom animation request")+"&body="+encodeURIComponent(body);
+  m.textContent="Opening your email app. If nothing opens, please email "+CONTACT_EMAIL+" directly.";return}
+ btn.disabled=true;btn.textContent="Sending...";m.textContent="";
+ try{const r=await fetch(FORM_ENDPOINT,{method:"POST",headers:{"Accept":"application/json"},body:fd});
   if(!r.ok)throw 0;f.reset();m.textContent="Thanks! Your request was sent. I'll reply by email with a quote."}
  catch(_){m.textContent="Something went wrong sending your request."+(CONTACT_EMAIL?" Please email "+CONTACT_EMAIL+" directly.":" Please try again.")}
  btn.disabled=false;btn.textContent="Send request"});
