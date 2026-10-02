@@ -123,7 +123,11 @@ const B=[
 let cat="All",term="",OWNER=false;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
-const buy=(k,l)=>LINKS[k]?`<a class="btn" href="${esc(LINKS[k])}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn off">Coming soon</span>`;
+/* Direct checkout: turns https://payhip.com/b/KEY into https://payhip.com/buy?link=KEY (skips the product page).
+   If a bundle ever needs its own checkout URL from Payhip (Products > Checkout URL > Copy URL), put it in CHECKOUT_OVERRIDE by name. */
+const CHECKOUT_OVERRIDE={};
+const co=k=>CHECKOUT_OVERRIDE[k]||LINKS[k].replace(/\/b\/([A-Za-z0-9]+)\/?$/,"/buy?link=$1");
+const buy=(k,l)=>LINKS[k]?`<a class="btn" href="${esc(co(k))}" target="_blank" rel="noopener">${l}</a>`:`<span class="btn off">Coming soon</span>`;
 function render(){
  $("#cols").innerHTML=B.map(b=>{const g=P.filter(p=>b.cats.includes(p.cat)),tot=g.reduce((a,p)=>a+p.price,0);
   const tiles=Array.from({length:12},(_,k)=>`<i style="--c:var(--${b.cats[k%b.cats.length]})"></i>`).join("");
