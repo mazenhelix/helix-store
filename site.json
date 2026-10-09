@@ -1,0 +1,500 @@
+{
+  "banner": {
+    "enabled": true,
+    "badge": "Limited time",
+    "text": "Take 20% off every Helix asset with code",
+    "code": "HELIX20",
+    "endsAt": "2026-11-30T23:59:59Z",
+    "pct": 20
+  },
+  "discordUrl": "",
+  "email": "mazentestin51@gmail.com",
+  "formEndpoint": "https://formspree.io/f/mwlpdypp",
+  "creators": [],
+  "stores": {
+    "animations": [
+      {
+        "id": "a3dblock",
+        "n": "3D Block",
+        "price": 20,
+        "size": "159 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/Ynijx",
+        "d": "Premiere Pro .mogrt template · 159 KB"
+      },
+      {
+        "id": "acustombackdrop",
+        "n": "Custom Backdrop",
+        "price": 10,
+        "size": "67 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/YizD8",
+        "d": "Premiere Pro .mogrt template · 67 KB"
+      },
+      {
+        "id": "aenchantedbook",
+        "n": "Enchanted Book",
+        "price": 10,
+        "size": "55 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/LEC7k",
+        "d": "Premiere Pro .mogrt template · 55 KB"
+      },
+      {
+        "id": "afoldingminecraftmap",
+        "n": "Folding Minecraft Map",
+        "price": 20,
+        "size": "2.5 MB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/Ty037",
+        "d": "Premiere Pro .mogrt template · 2.5 MB"
+      },
+      {
+        "id": "aguiobjectivepopup",
+        "n": "GUI Objective Pop Up",
+        "price": 10,
+        "size": "48 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/YZxBf",
+        "d": "Premiere Pro .mogrt template · 48 KB"
+      },
+      {
+        "id": "ahangingminecrafttextonbackdrop",
+        "n": "Hanging Minecraft Text On Backdrop",
+        "price": 10,
+        "size": "74 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/E6IjA",
+        "d": "Premiere Pro .mogrt template · 74 KB"
+      },
+      {
+        "id": "aitembreakinginhalf",
+        "n": "Item Breaking In Half",
+        "price": 10,
+        "size": "38 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/uk8IE",
+        "d": "Premiere Pro .mogrt template · 38 KB"
+      },
+      {
+        "id": "aitembreakinglikeglass",
+        "n": "Item Breaking Like Glass",
+        "price": 5,
+        "size": "16 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/tbRlz",
+        "d": "Premiere Pro .mogrt template · 16 KB"
+      },
+      {
+        "id": "aitemshowcase",
+        "n": "Item Showcase",
+        "price": 15,
+        "size": "83 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/wFJsE",
+        "d": "Premiere Pro .mogrt template · 83 KB"
+      },
+      {
+        "id": "aitemsidewaystransition",
+        "n": "Item Sideways Transition",
+        "price": 5,
+        "size": "18 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/2k7VK",
+        "d": "Premiere Pro .mogrt template · 18 KB"
+      },
+      {
+        "id": "aitemslotshotbar",
+        "n": "Item Slots (Hotbar)",
+        "price": 20,
+        "size": "1.6 MB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/muTA5",
+        "d": "Premiere Pro .mogrt template · 1.6 MB"
+      },
+      {
+        "id": "alineitemtransition",
+        "n": "Line Item Transition",
+        "price": 5,
+        "size": "23 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/4eP7h",
+        "d": "Premiere Pro .mogrt template · 23 KB"
+      },
+      {
+        "id": "amaptravel",
+        "n": "Map Travel",
+        "price": 30,
+        "size": "2.4 MB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/jTrXJ",
+        "d": "Premiere Pro .mogrt template · 2.4 MB"
+      },
+      {
+        "id": "apaperrolloutobjective",
+        "n": "Paper Rollout Objective",
+        "price": 15,
+        "size": "243 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/Gx4jy",
+        "d": "Premiere Pro .mogrt template · 243 KB"
+      },
+      {
+        "id": "aquestscrollinfo",
+        "n": "Quest Scroll Info",
+        "price": 15,
+        "size": "265 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/XIU3B",
+        "d": "Premiere Pro .mogrt template · 265 KB"
+      },
+      {
+        "id": "ascrollimageshowcase",
+        "n": "Scroll Image Showcase",
+        "price": 20,
+        "size": "627 KB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/lOEsY",
+        "d": "Premiere Pro .mogrt template · 627 KB"
+      },
+      {
+        "id": "awindowpop",
+        "n": "Window Pop",
+        "price": 30,
+        "size": "20.7 MB",
+        "cat": "Object",
+        "tags": [
+          "Objects"
+        ],
+        "link": "https://payhip.com/b/ZUNYS",
+        "d": "Premiere Pro .mogrt template · 20.7 MB"
+      },
+      {
+        "id": "a2dwigglingminecrafttext",
+        "n": "2D Wiggling Minecraft Text",
+        "price": 5,
+        "size": "28 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/uV9av",
+        "d": "Premiere Pro .mogrt template · 28 KB"
+      },
+      {
+        "id": "a3dintrotext",
+        "n": "3D Intro Text",
+        "price": 10,
+        "size": "46 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/yTsWM",
+        "d": "Premiere Pro .mogrt template · 46 KB"
+      },
+      {
+        "id": "adiscoveryoverlay",
+        "n": "Discovery Overlay",
+        "price": 5,
+        "size": "17 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/AbeWM",
+        "d": "Premiere Pro .mogrt template · 17 KB"
+      },
+      {
+        "id": "adistortedminecrafttext",
+        "n": "Distorted Minecraft Text",
+        "price": 5,
+        "size": "27 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/1x4lu",
+        "d": "Premiere Pro .mogrt template · 27 KB"
+      },
+      {
+        "id": "aeliminationoverlay",
+        "n": "Elimination Overlay",
+        "price": 15,
+        "size": "80 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/S90YV",
+        "d": "Premiere Pro .mogrt template · 80 KB"
+      },
+      {
+        "id": "aenchanteddiscoverytext",
+        "n": "Enchanted Discovery Text",
+        "price": 10,
+        "size": "60 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/Bq1ZM",
+        "d": "Premiere Pro .mogrt template · 60 KB"
+      },
+      {
+        "id": "aminecrafthighlightedoutlinedtext",
+        "n": "Minecraft Highlighted & Outlined Text",
+        "price": 5,
+        "size": "18 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/jYckS",
+        "d": "Premiere Pro .mogrt template · 18 KB"
+      },
+      {
+        "id": "aminecraftpovimagetext",
+        "n": "Minecraft POV Image & Text",
+        "price": 5,
+        "size": "29 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/NQzkE",
+        "d": "Premiere Pro .mogrt template · 29 KB"
+      },
+      {
+        "id": "anametagarrow",
+        "n": "NameTag & Arrow",
+        "price": 5,
+        "size": "19 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/U5QjK",
+        "d": "Premiere Pro .mogrt template · 19 KB"
+      },
+      {
+        "id": "avanillaminecrafttextoverlay",
+        "n": "Vanilla Minecraft Text Overlay",
+        "price": 5,
+        "size": "14 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/3iGty",
+        "d": "Premiere Pro .mogrt template · 14 KB"
+      },
+      {
+        "id": "avictorytext",
+        "n": "Victory Text",
+        "price": 5,
+        "size": "17 KB",
+        "cat": "Text",
+        "tags": [
+          "Text"
+        ],
+        "link": "https://payhip.com/b/G2knh",
+        "d": "Premiere Pro .mogrt template · 17 KB"
+      },
+      {
+        "id": "abossfullstats",
+        "n": "Boss Full Stats",
+        "price": 30,
+        "size": "5.0 MB",
+        "cat": "UI",
+        "tags": [
+          "UI"
+        ],
+        "link": "https://payhip.com/b/ciGON",
+        "d": "Premiere Pro .mogrt template · 5.0 MB"
+      },
+      {
+        "id": "acraftingrecipe",
+        "n": "Crafting Recipe",
+        "price": 15,
+        "size": "85 KB",
+        "cat": "UI",
+        "tags": [
+          "UI"
+        ],
+        "link": "https://payhip.com/b/rxWoF",
+        "d": "Premiere Pro .mogrt template · 85 KB"
+      },
+      {
+        "id": "acraftinganimation",
+        "n": "Crafting Animation",
+        "price": 25,
+        "size": "640 KB",
+        "cat": "UI",
+        "tags": [
+          "UI"
+        ],
+        "link": "https://payhip.com/b/CES6v",
+        "d": "Premiere Pro .mogrt template · 640 KB"
+      },
+      {
+        "id": "aelementalchooser",
+        "n": "Elemental Chooser",
+        "price": 20,
+        "size": "1.4 MB",
+        "cat": "UI",
+        "tags": [
+          "UI"
+        ],
+        "link": "https://payhip.com/b/ytoA2",
+        "d": "Premiere Pro .mogrt template · 1.4 MB"
+      },
+      {
+        "id": "ahangingrules",
+        "n": "Hanging Rules",
+        "price": 25,
+        "size": "9.9 MB",
+        "cat": "UI",
+        "tags": [
+          "UI"
+        ],
+        "link": "https://payhip.com/b/l2aV0",
+        "d": "Premiere Pro .mogrt template · 9.9 MB"
+      },
+      {
+        "id": "ajoinminecraft",
+        "n": "Join Minecraft",
+        "price": 25,
+        "size": "1.4 MB",
+        "cat": "Scene",
+        "tags": [
+          "Scenes"
+        ],
+        "link": "https://payhip.com/b/86Owa",
+        "d": "Premiere Pro .mogrt template · 1.4 MB"
+      },
+      {
+        "id": "ctextcollection",
+        "n": "Text Collection",
+        "price": 49,
+        "coll": 1,
+        "best": 0,
+        "cats": [
+          "Text"
+        ],
+        "cat": "Text",
+        "tags": [
+          "Collections"
+        ],
+        "link": "https://payhip.com/b/dm3pe",
+        "img": "images/ctextcollection.webp",
+        "d": ""
+      },
+      {
+        "id": "cobjectcollection",
+        "n": "Object Collection",
+        "price": 179,
+        "coll": 1,
+        "best": 0,
+        "cats": [
+          "Object"
+        ],
+        "cat": "Object",
+        "tags": [
+          "Collections"
+        ],
+        "link": "https://payhip.com/b/UruZq",
+        "img": "images/cobjectcollection.webp",
+        "d": ""
+      },
+      {
+        "id": "cuiscenecollection",
+        "n": "UI & Scene Collection",
+        "price": 99,
+        "coll": 1,
+        "best": 0,
+        "cats": [
+          "UI",
+          "Scene"
+        ],
+        "cat": "UI",
+        "tags": [
+          "Collections"
+        ],
+        "link": "https://payhip.com/b/0HR9P",
+        "img": "images/cuiscenecollection.webp",
+        "d": ""
+      },
+      {
+        "id": "cfullbundle",
+        "n": "Full Bundle",
+        "price": 299,
+        "coll": 1,
+        "best": 1,
+        "cats": [
+          "Text",
+          "Object",
+          "UI",
+          "Scene"
+        ],
+        "cat": "Text",
+        "tags": [
+          "Collections"
+        ],
+        "link": "https://payhip.com/b/tDdo1",
+        "img": "images/cfullbundle.webp",
+        "d": ""
+      }
+    ],
+    "builds": [],
+    "plugins": []
+  }
+}
