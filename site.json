@@ -10,7 +10,15 @@
   "discordUrl": "",
   "email": "mazentestin51@gmail.com",
   "formEndpoint": "https://formspree.io/f/mwlpdypp",
-  "creators": [],
+  "creators": [
+    {
+      "id": "djpkbzf",
+      "name": "Yuta - يوتا",
+      "subs": "23.7k",
+      "url": "https://www.youtube.com/channel/UCLZj_sWWy-M0vyI5uccbCdQ",
+      "avatar": "images/djpkbzf-jjfzhz6.webp"
+    }
+  ],
   "stores": {
     "animations": [
       {
