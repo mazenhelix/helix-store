@@ -2,10 +2,10 @@
   "banner": {
     "enabled": true,
     "badge": "Limited time",
-    "text": "Take 20% off every Helix asset with code",
-    "code": "HELIX20",
-    "endsAt": "2026-11-30T23:59:59Z",
-    "pct": 20
+    "text": "Take 25% off every Helix asset with code",
+    "code": "SPOOKY26",
+    "pct": 25,
+    "endsAt": "2026-12-31T13:59:00.000Z"
   },
   "discordUrl": "",
   "email": "mazentestin51@gmail.com",
