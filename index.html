@@ -234,7 +234,7 @@ function store(k){
  draw()}
 
 /* footer: the Premiere / affiliation note belongs to the animations store only */
-function footer(k){$("#ft").innerHTML=`<div class="wrap"><span>${k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"© Helix Studio"}</span><span><a href="/showcase/">Showcase</a> · <a href="mailto:${esc(S.email)}">Email</a></span></div>`}
+function footer(k){$("#ft").innerHTML=`<div class="wrap"><span>${k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"© Helix Studio"}</span><span><a href="/showcase/">Showcase</a> · <a href="#/admin">Owner</a> · <a href="mailto:${esc(S.email)}">Email</a></span></div>`}
 
 /* routing */
 const DEFAULT_FAQ=[
@@ -309,7 +309,14 @@ function settings(){const o={...S.banner,discordUrl:S.discordUrl,email:S.email,f
  form("Site settings",[{k:"enabled",l:"Show announcement bar",t:"check"},{k:"badge",l:"Badge text",full:false},{k:"code",l:"Coupon code",full:false},{k:"text",l:"Announcement text"},{k:"pct",l:"Discount shown on prices (%)",t:"number",full:false},{k:"endsAt",l:"Offer ends",t:"dt",full:false},{k:"discordUrl",l:"Discord invite link (leave empty to hide)"},{k:"email",l:"Contact email",full:false},{k:"formEndpoint",l:"Commission form endpoint (Formspree)",full:false}],o,v=>{
   S.banner={enabled:!!v.enabled,badge:v.badge,text:v.text,code:v.code,pct:Math.min(90,v.pct),endsAt:v.endsAt};S.discordUrl=v.discordUrl;S.email=v.email;S.formEndpoint=v.formEndpoint})}
 /* ===================== OWNER MODE: /#/admin, saves to GitHub ===================== */
-const KEY="helix_gh";
+const KEY="helix_gh";let VIA=null;
+const GT=()=>{try{return localStorage.getItem("helix_tok")}catch(_){return null}};
+async function tryG(keep){const t=GT();if(!t)return false;try{const h={authorization:"Bearer "+t},me=await fetch("/api/me",{headers:h});if(!me.ok||!(await me.json()).owner)return false;
+ const r=await fetch("/api/site",{headers:h});if(!r.ok)return false;S=JSON.parse((await r.json()).json);initFaq();VIA="api";OWNER=true;dirty=0;note="";if(!keep)history.replaceState(null,"","#/");ann();ownBar();route();return true}catch(_){return false}}
+async function gsign(){const el=$("#gb");if(!el||!S.googleClientId)return;await new Promise(r=>{if(window.google)return r();const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.onload=r;s.onerror=r;document.head.append(s)});if(!window.google)return;
+ google.accounts.id.initialize({client_id:S.googleClientId,callback:async x=>{try{const r=await fetch("/api/auth",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({credential:x.credential})});if(!r.ok)throw 0;const j=await r.json();localStorage.setItem("helix_tok",j.token);
+  if(!j.user.owner){$("#lm").textContent="That Google account is not the owner.";return}$("#ed").close();await tryG()}catch(_){$("#lm").textContent="Google sign-in failed."}}});
+ google.accounts.id.renderButton(el,{theme:"filled_black",size:"large",text:"signin_with"})}
 const creds=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"null")}catch(_){return null}};
 const setCreds=c=>{try{c?localStorage.setItem(KEY,JSON.stringify(c)):localStorage.removeItem(KEY)}catch(_){}};
 async function gh(path,opt={}){const c=creds();
@@ -329,10 +336,11 @@ function login(msg){const d=$("#ed"),c=creds()||{};
  <div class="fd full"><label>Repository (owner/name)</label><input name="repo" value="${esc(c.repo||"mazenhelix/helix-store")}" placeholder="mazenhelix/helix-store" autocomplete="off" required></div>
  <div class="fd full"><label>Branch</label><input name="branch" value="${esc(c.branch||"main")}" autocomplete="off" required></div>
  <div class="fd full"><label>Token</label><input name="token" type="password" value="${esc(c.token)}" autocomplete="off" required></div>
+ <div class="full" id="gb"></div><p class="mu full" style="font-size:.85rem">Sign in with the owner Google account above. Or use a GitHub token below.</p>
  <div class="cm full" role="status" id="lm" style="color:#fb7185">${esc(msg||"")}</div>
  <div class="row"><span></span><span style="display:flex;gap:8px"><button type="button" class="btn ghost sm" id="ecx">Cancel</button><button class="btn sm" type="submit" id="lg">Sign in</button></span></div></form>`;
  $("#ecx").onclick=()=>d.close();
- d.onclose=()=>{d.innerHTML="";d.onclose=null;if(!OWNER&&/^#\/admin/.test(location.hash))history.replaceState(null,"","#/")};
+ gsign();d.onclose=()=>{d.innerHTML="";d.onclose=null;if(!OWNER&&/^#\/admin/.test(location.hash))history.replaceState(null,"","#/")};
  $("#ed form").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.currentTarget),b=$("#lg");
   const c={repo:String(f.get("repo")).trim().replace(/^https?:\/\/github\.com\//,"").replace(/\.git$/,"").replace(/\/$/,""),branch:String(f.get("branch")).trim(),token:String(f.get("token")).trim()};
   b.disabled=true;b.textContent="Signing in…";$("#lm").textContent="";
@@ -344,12 +352,15 @@ async function enter(c){setCreds(c);
  OWNER=true;dirty=0;note="";history.replaceState(null,"","#/");ann();ownBar();route()}
 async function admin(){
  if(OWNER){history.replaceState(null,"","#/");route();return}
- if(!creds())return login();
+ if(await tryG())return;if(!creds())return login();
  try{await enter(creds())}catch(e){login(ghError(e))}}
 
 async function publish(){const b=$("#pub");b.disabled=true;b.textContent="Publishing…";const c=creds();
  try{
   const json=JSON.stringify(S,null,2)+"\n",used=new Set(json.match(/images\/[^"\\]+/g)||[]);
+  if(VIA==="api"){const imgs={};for(const p of Object.keys(PEND))if(used.has(p))imgs[p]=PEND[p].split(",")[1];
+   const r=await fetch("/api/site",{method:"PUT",headers:{"content-type":"application/json",authorization:"Bearer "+GT()},body:JSON.stringify({json,images:imgs})});if(!r.ok)throw new Error("api "+r.status);
+   dirty=0;note="Published. The live site updates in about a minute.";ownBar();return}
   const files=[{path:"site.json",blob:{content:json,encoding:"utf-8"}},...Object.keys(PEND).filter(p=>used.has(p)).map(p=>({path:p,blob:{content:PEND[p].split(",")[1],encoding:"base64"}}))];
   const br=encodeURIComponent(c.branch);
   const ref=await(await gh("/git/ref/heads/"+br)).json(),base=ref.object.sha;
@@ -364,14 +375,14 @@ async function publish(){const b=$("#pub");b.disabled=true;b.textContent="Publis
 function ownBar(){let o=$("#own");if(!o){o=document.createElement("div");o.id="own";o.setAttribute("role","region");o.setAttribute("aria-label","Owner tools");document.body.append(o);$("#ft").style.paddingBottom="90px"}
  o.innerHTML=`<b>Owner mode</b><button class="btn ghost sm" id="set">Site settings</button><span class="mu" style="font-size:.85rem">${dirty?dirty+" unpublished change"+(dirty>1?"s":""):esc(note||"No changes")}</span>${dirty?'<button class="btn sm" id="pub">Publish changes</button><button class="btn ghost sm" id="dis">Discard</button>':""}<button class="btn ghost sm" id="out">Sign out</button>`;
  $("#set").onclick=settings;$("#pub")?.addEventListener("click",publish);$("#dis")?.addEventListener("click",()=>{dirty=0;location.reload()});
- $("#out").onclick=()=>{if(dirty&&!confirm("You have unpublished changes. Sign out and lose them?"))return;dirty=0;setCreds(null);location.reload()}}
+ $("#out").onclick=()=>{if(dirty&&!confirm("You have unpublished changes. Sign out and lose them?"))return;dirty=0;setCreds(null);try{localStorage.removeItem("helix_tok")}catch(_){}location.reload()}}
 addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 
 /* load content, then render */
 (async()=>{
  try{const r=await fetch("site.json",{cache:"no-cache"});if(!r.ok)throw 0;S=await r.json();initFaq()}
  catch(_){app.innerHTML='<div class="wrap"><div class="soon"><h2>The site data didn\'t load</h2><p class="mu">Check your connection and refresh. If you opened this file straight from disk, serve the folder with a local web server instead.</p></div></div>';return}
- ann();route()})();
+ ann();route();tryG(1)})();
 
 </script>
 </body>

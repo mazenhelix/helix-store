@@ -45,16 +45,21 @@ async function write(e,u,col,id,req,del){
  await e.DB.batch([del?e.DB.prepare('DELETE FROM docs WHERE col=?1 AND id=?2').bind(col,id):e.DB.prepare('INSERT INTO docs(col,id,data,updated) VALUES(?1,?2,?3,?4) ON CONFLICT(col,id) DO UPDATE SET data=?3,updated=?4').bind(col,id,JSON.stringify(data),Date.now()),e.DB.prepare("UPDATE meta SET v=v+1 WHERE k='version'")]);
  return J({ok:1})}
 
-const GH=(e,path,o={})=>fetch(`https://api.github.com/repos/${e.GITHUB_REPO}/contents/${path}`+(o.method?'':`?ref=${e.GITHUB_BRANCH||'main'}`),{...o,headers:{authorization:'Bearer '+e.GITHUB_TOKEN,accept:'application/vnd.github+json','content-type':'application/json','user-agent':'helix-store','x-github-api-version':'2022-11-28'}});
+async function ghj(e,path,method='GET',body){const r=await fetch(`https://api.github.com/repos/${e.GITHUB_REPO}/${path}`,{method,headers:{authorization:'Bearer '+e.GITHUB_TOKEN,accept:'application/vnd.github+json','content-type':'application/json','user-agent':'helix-store','x-github-api-version':'2022-11-28'},body:body?JSON.stringify(body):undefined});if(!r.ok){const x=new Error('GitHub '+r.status);x.status=r.status;throw x}return r.json()}
 async function site(e,req,m){
  if(!e.GITHUB_TOKEN||!e.GITHUB_REPO)return J({error:'GITHUB_TOKEN or GITHUB_REPO is not set'},500);
- if(m==='GET'){const r=await GH(e,'site.json');if(!r.ok)return J({error:'GitHub '+r.status},502);const j=await r.json();return J({sha:j.sha,json:dec.decode(unb(j.content.replace(/\s/g,'')))})}
- if(m==='PUT'){const b=await req.json();let o;try{o=JSON.parse(b.json)}catch{return J({error:'bad json'},400)}
-  if(!o||typeof o.stores!=='object'||typeof o.banner!=='object'||b.json.length>500000)return J({error:'invalid site data'},400);
-  const bytes=enc.encode(b.json);let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));
-  const r=await GH(e,'site.json',{method:'PUT',body:JSON.stringify({message:'Update site content (Showcase editor)',content:btoa(s),sha:b.sha,branch:e.GITHUB_BRANCH||'main'})});
-  if(r.status===409||r.status===422)return J({error:'site.json changed on GitHub. Reload the editor and redo your edit.'},409);
-  if(!r.ok)return J({error:'GitHub '+r.status},502);return J({sha:(await r.json()).content.sha})}
+ const br=e.GITHUB_BRANCH||'main';
+ try{
+  if(m==='GET'){const j=await ghj(e,`contents/site.json?ref=${br}`);return J({json:dec.decode(unb(j.content.replace(/\s/g,'')))})}
+  if(m==='PUT'){const b=await req.json();let o;try{o=JSON.parse(b.json)}catch{return J({error:'bad json'},400)}
+   if(!o||typeof o.stores!=='object'||typeof o.banner!=='object'||b.json.length>500000)return J({error:'invalid site data'},400);
+   const files=[{path:'site.json',content:b.json,encoding:'utf-8'}];
+   for(const[p,d]of Object.entries(b.images||{})){if(!/^images\/[\w.-]+\.webp$/.test(p)||!/^[A-Za-z0-9+\/=]+$/.test(d))return J({error:'bad image'},400);files.push({path:p,content:d,encoding:'base64'})}
+   const base=(await ghj(e,`git/ref/heads/${br}`)).object.sha,cm=await ghj(e,`git/commits/${base}`),tree=[];
+   for(const f of files){const bl=await ghj(e,'git/blobs','POST',{content:f.content,encoding:f.encoding});tree.push({path:f.path,mode:'100644',type:'blob',sha:bl.sha})}
+   const nt=await ghj(e,'git/trees','POST',{base_tree:cm.tree.sha,tree}),nc=await ghj(e,'git/commits','POST',{message:'Update site content',tree:nt.sha,parents:[base]});
+   await ghj(e,`git/refs/heads/${br}`,'PATCH',{sha:nc.sha});return J({ok:1})}
+ }catch(err){return J({error:err.message||'github'},502)}
  return J({error:'method'},405)}
 
 export async function onRequest({request:req,env:e}){
