@@ -136,7 +136,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 <div id="ann" hidden><div class="wrap"><span class="tag" id="at"></span><span id="am"></span><button class="code" id="ac" title="Copy code"></button><span>Ends in <b id="cd"></b></span><button class="x" id="ax" aria-label="Dismiss announcement">×</button></div></div>
 <header class="nav"><div class="wrap">
 <a class="logo" href="#/" aria-label="Helix Studio home"><img class="lg" src="images/logo.webp" alt="">Helix Studio</a>
-<nav aria-label="Main"><a href="#/store/animations" data-r="animations">Animations</a><a href="#/store/builds" data-r="builds">Builds</a><a href="#/store/plugins" data-r="plugins">Plugins</a><a class="keep" href="#/faq" data-r="faq">FAQ</a><a class="keep" href="#/commission">Commission</a></nav>
+<nav aria-label="Main"><a href="#/store/animations" data-r="animations">Animations</a><a href="#/store/builds" data-r="builds">Builds</a><a href="#/store/plugins" data-r="plugins">Plugins</a><a class="keep" href="#/faq" data-r="faq">FAQ</a><a class="keep" href="#/commission">Commission</a><a class="keep" href="/showcase/">Showcase</a></nav>
 </div></header>
 <main id="app"></main>
 <footer id="ft"></footer>
@@ -184,17 +184,22 @@ function home(){
  <div class="hl" aria-hidden="true"><img src="${LOGO}" alt=""><i style="left:12%;top:22%"></i><i style="right:10%;top:14%;animation-delay:-1s"></i><i style="left:6%;bottom:26%;animation-delay:-2s"></i><i style="right:16%;bottom:18%;animation-delay:-3s"></i></div></section>
  ${m.length?`<div class="metrics">${m.map(x=>`<div class="metric"><b>${esc(x.value)}</b><span>${esc(x.label)}</span></div>`).join("")}</div>`:""}</div>
  <section class="blk" id="gates"><div class="wrap"><div class="hd"><h2>Choose a store</h2></div><div class="gates">${Object.entries(STORES).map(([k,s])=>{const n=S.stores[k].filter(p=>!p.coll).length;return `<a class="gate" href="#/store/${k}"><span class="em" aria-hidden="true">${s.em}</span><h3>${s.t}</h3><p>${s.g}</p><span class="go"><span>${n?ap(n)+" templates".replace("templates",k==="animations"?"templates":"listings"):"Coming soon"}</span><span>Open store</span></span></a>`}).join("")}</div></div></section>
+ <section class="blk" id="scw"></section>
  ${S.creators.length||OWNER?`<section class="blk"><div class="wrap"><div class="hd"><h2>Creators using Helix</h2>${OWNER?'<button class="ib" id="addc">+ Add creator</button>':""}</div>${S.creators.length?`<div class="crow">${S.creators.map(c=>`<div class="cw"><a class="cc" href="${esc(c.url||"#")}" target="_blank" rel="noopener"><span class="av">${c.avatar?`<img src="${esc(src(c.avatar))}" alt="">`:esc((c.name||"?")[0])}</span><span><b>${esc(c.name)}</b><small>${esc(c.subs)} subscribers</small><br><span class="chip">Works powered by Helix</span></span></a>${OWNER?`<div class="adm"><button class="ib" data-ec="${c.id}">Edit</button></div>`:""}</div>`).join("")}</div>`:'<p class="mu">No creators yet. Add partners as you sign them.</p>'}</div></section>`:""}
  ${S.discordUrl?`<section class="blk"><div class="wrap"><div class="disc"><h3>Join the community</h3><p>Ask questions, share what you made and hear about new releases first.</p><a class="btn" href="${esc(S.discordUrl)}" target="_blank" rel="noopener">Join our Discord</a></div></div></section>`:""}
- <section class="blk" id="commission"><div class="wrap"><div class="hd"><h2>Request a custom commission</h2><span class="mu">Tell us what you need and we'll reply by email with a quote.</span></div>
+ <section class="blk" id="commission"><div class="wrap"><div class="hd"><h2>Request a custom commission</h2><span class="mu">Tell us what you need and we'll reply by email with a quote. Or <a href="/showcase/#commission" style="color:var(--cy)">pick an editor in the Showcase</a>.</span></div>
  <form class="form" id="cf"><p hidden><input name="_gotcha" tabindex="-1" autocomplete="off"></p>
  <input name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required><input name="email" type="email" placeholder="Your email" aria-label="Your email" autocomplete="email" required>
  <select name="type" aria-label="Project type"><option>Animation</option><option>Minecraft build</option><option>Plugin or Skript</option><option>Something else</option></select><input name="deadline" placeholder="Deadline (optional)" aria-label="Deadline">
  <textarea class="full" name="description" placeholder="Describe what you want built" aria-label="Project description" required></textarea>
  <div class="full" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><button class="btn" id="send" type="submit">Send request</button><div class="cm" id="cm" role="status"></div></div></form></div></section>`;
- $("#cf").addEventListener("submit",submit);
+ loadShowcase();$("#cf").addEventListener("submit",submit);
  $("#addc")?.addEventListener("click",()=>editCreator({id:uid(),name:"",subs:"",url:"",avatar:""},true));
  app.querySelectorAll("[data-ec]").forEach(b=>b.onclick=()=>editCreator(S.creators.find(c=>c.id===b.dataset.ec)))}
+/* live data from the Showcase backend (public, read-only) */
+async function loadShowcase(){const el=$("#scw");if(!el)return;let o=null;try{const r=await fetch("/api/sync");if(r.ok)o=(await r.json()).data}catch(_){}
+ const st=(o&&o.settings&&o.settings.main)||{},open=st.open??true,eds=Object.keys((o&&o.editors)||{}).length,ws=Object.values((o&&o.works)||{}).flatMap(d=>d.items||[]).slice(-3).reverse();
+ el.innerHTML=`<div class="wrap"><div class="disc"><h3>Helix Showcase</h3><p>Thumbnails and Minecraft animations by the Helix team. Pick an editor and commission them directly.</p><p><span class="chip">${open?"● Commissions open"+(st.slots?" · "+st.slots+" slots left":""):"● Commissions closed"}</span> ${eds?`<span class="chip">${eds} editor${eds>1?"s":""}</span>`:""} ${ws.map(w=>`<span class="chip">${esc(w.t)}</span>`).join(" ")}</p><a class="btn" href="/showcase/">Open the Showcase</a></div></div>`}
 async function submit(e){e.preventDefault();const f=e.currentTarget,b=$("#send"),m=$("#cm"),fd=new FormData(f);if(fd.get("_gotcha"))return;
  b.disabled=true;b.textContent="Sending…";m.textContent="";
  try{const r=await fetch(S.formEndpoint,{method:"POST",headers:{Accept:"application/json"},body:fd});if(!r.ok)throw 0;f.reset();m.style.color="var(--ok)";m.textContent="Request sent. We'll reply by email with a quote."}
@@ -229,7 +234,7 @@ function store(k){
  draw()}
 
 /* footer: the Premiere / affiliation note belongs to the animations store only */
-function footer(k){$("#ft").innerHTML=`<div class="wrap"><span>${k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"© Helix Studio"}</span><span><a href="mailto:${esc(S.email)}">Email</a></span></div>`}
+function footer(k){$("#ft").innerHTML=`<div class="wrap"><span>${k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"© Helix Studio"}</span><span><a href="/showcase/">Showcase</a> · <a href="mailto:${esc(S.email)}">Email</a></span></div>`}
 
 /* routing */
 const DEFAULT_FAQ=[
@@ -238,6 +243,7 @@ const DEFAULT_FAQ=[
  {id:"f3",q:"How do I install a .mogrt template?",a:"In Premiere Pro, open the Essential Graphics panel and go to the Browse tab. Click the Install Motion Graphics template button at the bottom right and pick the .mogrt file. Then drag it onto your timeline."},
  {id:"f4",q:"Can I use these in other editors?",a:"No. They are made for Adobe Premiere Pro and are not designed for other video editors."},
  {id:"f5",q:"Can you build something custom for me?",a:"Yes. Send a request with the Commission form and we will reply by email with a quote."},
+ {id:"f7",q:"What is the Showcase?",a:"The Helix Showcase is our portfolio of thumbnails and animations. Sign in there to commission one of our editors directly, chat with them and get your files."},
  {id:"f6",q:"Are you affiliated with Mojang or Microsoft?",a:"No. Helix is an independent studio and is not affiliated with Mojang or Microsoft."}];
 function initFaq(){if(!Array.isArray(S.faq))S.faq=DEFAULT_FAQ.map(x=>({...x}))}
 function faq(){
@@ -320,7 +326,7 @@ function ghError(e){const s=e&&e.status;
 function login(msg){const d=$("#ed"),c=creds()||{};
  d.innerHTML=`<form><h2 class="full">Owner sign in</h2>
  <p class="mu full" style="font-size:.9rem">Paste a GitHub fine-grained token limited to this repository with <b>Contents: Read and write</b>. It stays in this browser and is never part of the site.</p>
- <div class="fd full"><label>Repository (owner/name)</label><input name="repo" value="${esc(c.repo)}" placeholder="yourname/helix-store" autocomplete="off" required></div>
+ <div class="fd full"><label>Repository (owner/name)</label><input name="repo" value="${esc(c.repo||"mazenhelix/helix-store")}" placeholder="mazenhelix/helix-store" autocomplete="off" required></div>
  <div class="fd full"><label>Branch</label><input name="branch" value="${esc(c.branch||"main")}" autocomplete="off" required></div>
  <div class="fd full"><label>Token</label><input name="token" type="password" value="${esc(c.token)}" autocomplete="off" required></div>
  <div class="cm full" role="status" id="lm" style="color:#fb7185">${esc(msg||"")}</div>
