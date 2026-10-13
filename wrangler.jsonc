@@ -4,7 +4,7 @@
   "compatibility_date": "2026-10-01",
   "assets": { "directory": ".", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
   "d1_databases": [
-    { "binding": "DB", "database_name": "helix-db", "database_id": "PASTE_YOUR_D1_DATABASE_ID_HERE" }
+    { "binding": "DB", "database_name": "helix-db", "database_id": "ef1dae40-1927-4b82-9f07-d0c417715307" }
   ],
   "vars": {
     "GOOGLE_CLIENT_ID": "",
