@@ -45,6 +45,18 @@ async function write(e,u,col,id,req,del){
  await e.DB.batch([del?e.DB.prepare('DELETE FROM docs WHERE col=?1 AND id=?2').bind(col,id):e.DB.prepare('INSERT INTO docs(col,id,data,updated) VALUES(?1,?2,?3,?4) ON CONFLICT(col,id) DO UPDATE SET data=?3,updated=?4').bind(col,id,JSON.stringify(data),Date.now()),e.DB.prepare("UPDATE meta SET v=v+1 WHERE k='version'")]);
  return J({ok:1})}
 
+const GH=(e,path,o={})=>fetch(`https://api.github.com/repos/${e.GITHUB_REPO}/contents/${path}`+(o.method?'':`?ref=${e.GITHUB_BRANCH||'main'}`),{...o,headers:{authorization:'Bearer '+e.GITHUB_TOKEN,accept:'application/vnd.github+json','content-type':'application/json','user-agent':'helix-store','x-github-api-version':'2022-11-28'}});
+async function site(e,req,m){
+ if(!e.GITHUB_TOKEN||!e.GITHUB_REPO)return J({error:'GITHUB_TOKEN or GITHUB_REPO is not set'},500);
+ if(m==='GET'){const r=await GH(e,'site.json');if(!r.ok)return J({error:'GitHub '+r.status},502);const j=await r.json();return J({sha:j.sha,json:dec.decode(unb(j.content.replace(/\s/g,'')))})}
+ if(m==='PUT'){const b=await req.json();let o;try{o=JSON.parse(b.json)}catch{return J({error:'bad json'},400)}
+  if(!o||typeof o.stores!=='object'||typeof o.banner!=='object'||b.json.length>500000)return J({error:'invalid site data'},400);
+  const bytes=enc.encode(b.json);let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));
+  const r=await GH(e,'site.json',{method:'PUT',body:JSON.stringify({message:'Update site content (Showcase editor)',content:btoa(s),sha:b.sha,branch:e.GITHUB_BRANCH||'main'})});
+  if(r.status===409||r.status===422)return J({error:'site.json changed on GitHub. Reload the editor and redo your edit.'},409);
+  if(!r.ok)return J({error:'GitHub '+r.status},502);return J({sha:(await r.json()).content.sha})}
+ return J({error:'method'},405)}
+
 export async function onRequest({request:req,env:e}){
  const url=new URL(req.url),p=url.pathname.replace(/^\/api/,'').replace(/\/$/,''),m=req.method;
  const tk=(req.headers.get('authorization')||'').replace(/^Bearer /,''),u=tk?await check(e,tk):null;
@@ -57,6 +69,7 @@ export async function onRequest({request:req,env:e}){
   if(p==='/sync'&&m==='GET')return sync(e,u,url.searchParams.get('v'));
   if(p==='/profiles'){const ids=(url.searchParams.get('ids')||'').split(',').filter(x=>/^[\w-]{1,64}$/.test(x)).slice(0,60),o={};
    if(ids.length)for(const r of(await e.DB.prepare(`SELECT id,name,avatar FROM users WHERE id IN (${ids.map(()=>'?').join(',')})`).bind(...ids).all()).results)o[r.id]={name:r.name,avatarUrl:r.avatar};return J(o)}
+  if(p==='/site'){if(!u||!u.owner)return J({error:'owner only'},403);return site(e,req,m)}
   const d=p.match(/^\/doc\/(\w+)\/([\w-]+)$/);if(d&&(m==='PUT'||m==='DELETE'))return write(e,u,d[1],d[2],req,m==='DELETE');
   return J({error:'not found'},404)
  }catch(err){return J({error:'server'},500)}}
