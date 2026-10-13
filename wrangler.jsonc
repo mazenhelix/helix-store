@@ -7,7 +7,7 @@
     { "binding": "DB", "database_name": "helix-db", "database_id": "ef1dae40-1927-4b82-9f07-d0c417715307" }
   ],
   "vars": {
-    "GOOGLE_CLIENT_ID": "",
+    "GOOGLE_CLIENT_ID": "564630968950-od5v569vh804emuekepat2o0nk9qkd46.apps.googleusercontent.com",
     "OWNER_EMAILS": "mazentestin51@gmail.com"
   }
 }
