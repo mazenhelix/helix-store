@@ -1,0 +1,13 @@
+{
+  "name": "helix-store",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": ".", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "helix-db", "database_id": "PASTE_YOUR_D1_DATABASE_ID_HERE" }
+  ],
+  "vars": {
+    "GOOGLE_CLIENT_ID": "",
+    "OWNER_EMAILS": "mazentestin51@gmail.com"
+  }
+}
