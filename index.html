@@ -155,16 +155,19 @@ a.pil:hover{background:linear-gradient(160deg,color-mix(in srgb,var(--a) 26%,tra
 .cmgrid .side{display:grid;gap:12px}
 @media(max-width:860px){.pil.store,.pil.show,.pil.fqa,.pil.comm{grid-column:1/-1}.cmgrid{grid-template-columns:1fr}nav{overflow-x:auto;max-width:100%}nav a{white-space:nowrap}}
 @media(max-width:600px){.logo{font-size:0;gap:0}nav a{padding:8px 9px;font-size:.88rem}.hl{min-height:150px}}
+
+.hv{position:relative;min-height:260px}.hv img{position:absolute;width:56%;border-radius:14px;border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5);top:calc(var(--i)*18%);left:calc(var(--i)*18%);aspect-ratio:1;object-fit:cover}
+.hd{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}.hd .more{color:var(--cy);font-weight:700}
+.wkg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}.wk{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;min-height:150px;padding:16px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(150deg,hsl(var(--h) 60% 30%),hsl(calc(var(--h) + 50) 50% 12%))}.wk .wt{font:700 1.15rem var(--px)}.wk small{color:#cbd3e6}
+.promo{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:26px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(244,114,182,.16),rgba(139,92,246,.1))}.promo h2{margin-bottom:6px}.promo p{margin:6px 0;max-width:56ch}
+.faqp{max-width:820px;display:grid;gap:10px}.pvb{background:#facc15;color:#06070c;font-weight:700;padding:8px 14px;text-align:center}.pvb a{color:#06070c;text-decoration:underline}
+.pil>h2{font-size:1.5rem}
 </style>
 </head>
 <body>
-<div id="ann" hidden><div class="wrap"><span class="tag" id="at"></span><span id="am"></span><button class="code" id="ac" title="Copy code"></button><span>Ends in <b id="cd"></b></span><button class="x" id="ax" aria-label="Dismiss announcement">×</button></div></div>
-<header class="nav"><div class="wrap">
-<a class="logo" href="#/" aria-label="Helix Studio home"><img class="lg" src="images/logo.webp" alt="">Helix Studio</a>
-<nav aria-label="Main"><a href="#/store" data-r="store">Store</a><a href="/showcase/">Showcase</a><a href="#/faq" data-r="faq">FAQ</a><a href="#/commission" data-r="commission">Commission</a></nav>
-</div></header>
+<script src="/shell.js" data-section="home"></script>
+<script src="/home-default.js"></script><script src="/faq-seed.js"></script>
 <main id="app"></main>
-<footer id="ft"></footer>
 <dialog id="dlg" aria-label="Product preview"></dialog>
 <dialog id="ed" aria-label="Edit"></dialog>
 <script>
@@ -174,7 +177,7 @@ let OWNER=false,dirty=0,note="";
 const PEND={},src=u=>PEND[u]||u;
 const $=(s,r=document)=>r.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""),uid=()=>Math.random().toString(36).slice(2,9);
-const money=n=>"$"+(+(+n).toFixed(2)),LOGO=$(".lg").src;
+const money=n=>"$"+(+(+n).toFixed(2)),LOGO="/images/logo.webp";
 const ap=n=>{n=Math.floor(n);if(n<10)return String(n);const m=10**(String(n).length-1);return Math.floor(n/m)*m+"+"};
 const sale=()=>S.banner.enabled&&Date.now()<Date.parse(S.banner.endsAt);
 const disc=p=>sale()?+(p*(1-S.banner.pct/100)).toFixed(2):+p;
@@ -198,82 +201,46 @@ function card(p,k){
  <div class="cb"><h3>${esc(p.n)}</h3><small>${esc((p.tags||[]).join(" · "))}${p.size?" · "+esc(p.size):""}</small>
  <div class="buy">${priceHtml(+p.price)}${buyBtn(p,"sm")}</div></div></article>`}
 
-function home(){
- const A=S.stores.animations,t=tpls(),full=A.find(p=>p.best),m=[];
- if(t.length)m.push({label:"Animation templates",value:ap(t.length)});
- const nc=A.filter(p=>p.coll).length;if(nc)m.push({label:"Collections",value:ap(nc)});
- if(full){const sv=stats(full).tot-full.price;if(sv>0)m.push({label:"Saved with the Full Bundle",value:"$"+ap(sv)})}
- const cnt=k=>{const n=S.stores[k].filter(x=>!x.coll).length;return n?ap(n)+(k==="animations"?" templates":" listings"):"Coming soon"};
- app.innerHTML=`<div class="wrap"><section class="hero"><div><h1>Animations, builds and plugins made for Minecraft creators.</h1>
-  <p class="lead">Helix Studio is an independent creator and developer studio. Buy ready-made assets for your videos and server, browse our portfolio, or commission something built to your brief.</p>
-  <div class="cta"><a class="btn" href="#/store">Browse the store</a><a class="btn ghost" href="#/commission">Request a commission</a></div></div>
-  <div class="hl" aria-hidden="true"><img src="${LOGO}" alt=""><i style="left:12%;top:22%"></i><i style="right:10%;top:14%;animation-delay:-1s"></i><i style="left:6%;bottom:26%;animation-delay:-2s"></i><i style="right:16%;bottom:18%;animation-delay:-3s"></i></div></section>
-  ${m.length?`<div class="metrics">${m.map(x=>`<div class="metric"><b>${esc(x.value)}</b><span>${esc(x.label)}</span></div>`).join("")}</div>`:""}</div>
 
- <section class="blk" id="gates"><div class="wrap"><div class="pillars">
-  <article class="pil store"><span class="num">01</span><h2><span class="em" aria-hidden="true">🛒</span>Store</h2>
-   <p>Ready-made assets for your videos and your server. Pay on Payhip, download instantly.</p>
-   <div class="subs">${Object.entries(STORES).map(([k,x])=>`<a class="sub" href="#/store/${k}"><span aria-hidden="true">${x.em}</span><b>${x.s}</b><small>${cnt(k)}</small><span class="go">Open →</span></a>`).join("")}</div></article>
-
-  <article class="pil show" style="--a:var(--vi)"><span class="num">02</span><h2><span class="em" aria-hidden="true">🎞️</span>Showcase</h2>
-   <p>The Helix portfolio. Like something? Open it and commission the editor who made it.</p>
-   <div class="chips" id="scs"></div>
-   <div class="subs"><a class="sub" href="/showcase/#thumbnails"><span aria-hidden="true">🖼️</span><b>Thumbnails</b><small>YouTube thumbnails</small><span class="go">Open →</span></a>
-    <a class="sub" href="/showcase/#animations"><span aria-hidden="true">🎬</span><b>Montage</b><small>Edits and animations</small><span class="go">Open →</span></a></div></article>
-
-  <a class="pil fqa" href="#/faq" style="--a:#facc15"><span class="num">03</span><h2><span class="em" aria-hidden="true">❓</span>FAQ</h2>
-   <p>Installing templates, what software you need, licensing and more.</p><span class="go2">Read the answers →</span></a>
-
-  <article class="pil comm" style="--a:#f472b6"><span class="num">04</span><h2><span class="em" aria-hidden="true">✉️</span>Commission</h2>
-   <p>Every request form and every chat with the team lives here.</p>
-   <div class="subs"><a class="sub" href="#/commission"><span aria-hidden="true">📝</span><b>Request form</b><small>Get a quote by email</small><span class="go">Start →</span></a>
-    <a class="sub" href="/showcase/#commission"><span aria-hidden="true">🎯</span><b>Pick an editor</b><small>Commission directly</small><span class="go">Choose →</span></a>
-    <a class="sub" href="/showcase/#dashboard"><span aria-hidden="true">💬</span><b>My chats</b><small>Orders and messages</small><span class="go">Open →</span></a></div></article>
- </div></div></section>
-
- ${S.creators.length||OWNER?`<section class="blk"><div class="wrap"><div class="hd"><h2>Creators using Helix</h2>${OWNER?'<button class="ib" id="addc">+ Add creator</button>':""}</div>${S.creators.length?`<div class="crow">${S.creators.map(c=>`<div class="cw"><a class="cc" href="${esc(c.url||"#")}" target="_blank" rel="noopener"><span class="av">${c.avatar?`<img src="${esc(src(c.avatar))}" alt="">`:esc((c.name||"?")[0])}</span><span><b>${esc(c.name)}</b><small>${esc(c.subs)} subscribers</small><br><span class="chip">Works powered by Helix</span></span></a>${OWNER?`<div class="adm"><button class="ib" data-ec="${c.id}">Edit</button></div>`:""}</div>`).join("")}</div>`:'<p class="mu">No creators yet. Add partners as you sign them.</p>'}</div></section>`:""}
- ${S.discordUrl?`<section class="blk"><div class="wrap"><div class="disc"><h3>Join the community</h3><p>Ask questions, share what you made and hear about new releases first.</p><a class="btn" href="${esc(S.discordUrl)}" target="_blank" rel="noopener">Join our Discord</a></div></div></section>`:""}`;
- loadShowcase();
+/* ===== Home page: typed sections from the owner's config (draft/published) ===== */
+let HT=0;
+const HLINKS={store:"#/store/animations",showcase:"/showcase/#thumbnails",faq:"/faq/",commission:"/commission/#request"};
+const HLABEL={store:"Open the Store",showcase:"Open the Showcase",faq:"Read the FAQ",commission:"Start a request"};
+const allProducts=()=>Object.entries(S.stores).flatMap(([k,a])=>a.map(p=>({p,k})));
+function featuredPick(sec){const all=allProducts().filter(x=>x.p.n),by=new Map(all.map(x=>[x.p.id,x]));
+ let list=(sec.ids||[]).map(i=>by.get(i)).filter(Boolean);
+ if(!list.length){const rank=x=>x.p.best?0:x.p.popular?1:x.p.new?2:x.p.coll?3:4;list=[...all].sort((a,b)=>rank(a)-rank(b)).filter(x=>x.p.price>0||x.p.link)}
+ return list.slice(0,sec.count||4)}
+async function homeData(){const t=localStorage.getItem("helix_tok");let d={};try{const r=await fetch("/api/sync",{headers:t?{authorization:"Bearer "+t}:{}});if(r.ok)d=(await r.json()).data||{}}catch(_){}return d}
+const HSEC={
+ hero(sec,D){const pick=featuredPick({count:3}).filter(x=>x.p.img);
+  return `<div class="wrap"><section class="hero"><div><h1>${esc(sec.title)}</h1>${sec.text?`<p class="lead">${esc(sec.text)}</p>`:""}<div class="cta">${sec.pLabel?`<a class="btn" href="${HLINKS[sec.pLink]||"#/"}">${esc(sec.pLabel)}</a>`:""}${sec.sLabel?`<a class="btn ghost" href="${HLINKS[sec.sLink]||"#/"}">${esc(sec.sLabel)}</a>`:""}</div></div>
+  ${pick.length?`<div class="hv" aria-hidden="true">${pick.map((x,i)=>`<img src="${esc(src(x.p.img))}" alt="" style="--i:${i}">`).join("")}</div>`:""}</section></div>`},
+ cards(sec){return `<section class="blk"><div class="wrap">${sec.title?`<div class="hd"><h2>${esc(sec.title)}</h2></div>`:""}<div class="pillars">${(sec.items||[]).map((it,i)=>{const cls={store:"store",showcase:"show",faq:"fqa",commission:"comm"}[it.k],col={store:"var(--cy)",showcase:"var(--vi)",faq:"#facc15",commission:"#f472b6"}[it.k];
+   return `<a class="pil ${cls}" href="${HLINKS[it.k]}" style="--a:${col}"><span class="num">0${i+1}</span><h2>${esc(it.t||it.k)}</h2><p>${esc(it.d)}</p><span class="go2">${HLABEL[it.k]} →</span></a>`}).join("")}</div></div></section>`},
+ featured(sec){const l=featuredPick(sec);if(!l.length)return "";
+  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Featured")}</h2><a class="more" href="#/store/animations">View the Store →</a></div>${sec.text?`<p class="mu">${esc(sec.text)}</p>`:""}<div class="grid">${l.map(x=>card(x.p,x.k)).join("")}</div></div></section>`},
+ showcase(sec,D){const ws=Object.values(D.works||{}).flatMap(d=>d.items||[]).sort((a,b)=>(b.at||0)-(a.at||0)).slice(0,sec.count||3);if(!ws.length)return "";
+  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Showcase")}</h2><a class="more" href="/showcase/#thumbnails">Open the Showcase →</a></div>${sec.text?`<p class="mu">${esc(sec.text)}</p>`:""}<div class="wkg">${ws.map(w=>`<a class="wk" href="/showcase/#${w.cat==="thumbnails"?"thumbnails":"montage"}" style="--h:${+w.h||200}"><span class="wt">${esc(w.t)}</span><small>${w.cat==="thumbnails"?"Thumbnail":"Montage"}${w.d?" · "+esc(w.d):""}</small></a>`).join("")}</div></div></section>`},
+ commission(sec,D){const st=(D.settings&&D.settings.main)||{},open=st.open??true;
+  return `<section class="blk"><div class="wrap"><div class="promo"><div><h2>${esc(sec.title)}</h2><p class="mu">${esc(sec.text)}</p>${D.settings?`<p><span class="chip${open?"":" s"}">${open?"● Commissions open"+(st.slots?" · "+st.slots+" slots left":""):"● Commissions closed"}</span></p>`:""}</div><a class="btn" href="/commission/#request">${esc(sec.label||"Request a commission")}</a></div></div></section>`},
+ faq(sec,D){const f=(D.faq&&D.faq.main)||window.HX_FAQ_SEED,l=(f.items||[]).slice(0,sec.count||4);if(!l.length)return "";
+  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"FAQ")}</h2><a class="more" href="/faq/">All questions →</a></div><div class="faqp">${l.map(q=>`<details class="fq"><summary>${esc(q.q)}</summary><div class="ans">${String(q.a||"").split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}</div></details>`).join("")}</div></div></section>`},
+ creators(sec){if(!S.creators.length&&!OWNER)return "";
+  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Creators")}</h2>${OWNER?'<button class="ib" id="addc">+ Add creator</button>':""}</div>${S.creators.length?`<div class="crow">${S.creators.map(c=>`<div class="cw"><a class="cc" href="${esc(c.url||"#")}" target="_blank" rel="noopener"><span class="av">${c.avatar?`<img src="${esc(src(c.avatar))}" alt="">`:esc((c.name||"?")[0])}</span><span><b>${esc(c.name)}</b><small>${esc(c.subs)} subscribers</small></span></a>${OWNER?`<div class="adm"><button class="ib" data-ec="${c.id}">Edit</button></div>`:""}</div>`).join("")}</div>`:'<p class="mu">No creators yet.</p>'}</div></section>`}};
+async function home(){const my=++HT;app.innerHTML='<div class="wrap"><p class="mu" style="padding:60px 0">Loading…</p></div>';
+ const D=await homeData();if(my!==HT)return;
+ const prev=new URLSearchParams(location.search).get("preview")==="1",H=D.home||{};
+ const cfg=(prev&&H.draft)||H.published||window.HX_HOME_DEFAULT;
+ app.innerHTML=(prev?`<div class="pvb">${H.draft?"Previewing your unpublished draft. Visitors still see the published page.":"No saved draft yet, showing the live page."} <a href="/admin/#home">Back to editor</a></div>`:"")+cfg.sections.filter(x=>x.on&&HSEC[x.type]).map(x=>HSEC[x.type](x,D)).join("");
  $("#addc")?.addEventListener("click",()=>editCreator({id:uid(),name:"",subs:"",url:"",avatar:""},true));
  app.querySelectorAll("[data-ec]").forEach(b=>b.onclick=()=>editCreator(S.creators.find(c=>c.id===b.dataset.ec)))}
-
-/* Store hub: the three stores */
-function storeHub(){
- app.innerHTML=`<div class="wrap"><div class="sh"><h1>🛒 Store</h1><p class="mu">Pick a store. Animations are Premiere Pro templates; builds and plugins are for your Minecraft server.</p></div>
- <div class="gates" style="margin:22px 0 40px">${Object.entries(STORES).map(([k,s])=>{const n=S.stores[k].filter(p=>!p.coll).length;return `<a class="gate" href="#/store/${k}"><span class="em" aria-hidden="true">${s.em}</span><h3>${s.t}</h3><p>${s.g}</p><span class="go"><span>${n?ap(n)+(k==="animations"?" templates":" listings"):"Coming soon"}</span><span>Open store</span></span></a>`}).join("")}</div></div>`}
-
-/* Commission: all forms and all chats */
-function commission(){
- app.innerHTML=`<div class="wrap"><div class="sh"><h1>✉️ Commission</h1><p class="mu">Send a request, pick an editor, or continue a conversation. Everything about custom work starts on this page.</p></div>
- <div class="cmgrid"><div><h2 style="margin-bottom:12px">Request form</h2>
- <form class="form" id="cf"><p hidden><input name="_gotcha" tabindex="-1" autocomplete="off"></p>
- <input name="name" placeholder="Your name" aria-label="Your name" autocomplete="name" required><input name="email" type="email" placeholder="Your email" aria-label="Your email" autocomplete="email" required>
- <select name="type" aria-label="Project type"><option>Animation</option><option>Minecraft build</option><option>Plugin or Skript</option><option>Thumbnail</option><option>Montage</option><option>Something else</option></select><input name="deadline" placeholder="Deadline (optional)" aria-label="Deadline">
- <textarea class="full" name="description" placeholder="Describe what you want built" aria-label="Project description" required></textarea>
- <div class="full" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><button class="btn" id="send" type="submit">Send request</button><div class="cm" id="cm" role="status"></div></div></form></div>
- <div class="side"><h2>Chats and orders</h2>
-  <a class="sub" href="/showcase/#commission" style="--a:#f472b6"><b>Commission an editor</b><small>Pick someone from the Showcase and send them a brief.</small><span class="go">Choose an editor →</span></a>
-  <a class="sub" href="/showcase/#dashboard" style="--a:#f472b6"><b>My commissions and chats</b><small>Sign in to see your orders, messages and files.</small><span class="go">Open dashboard →</span></a>
-  <a class="sub" href="/showcase/#editors" style="--a:#f472b6"><b>Meet the editors</b><small>See who works on what.</small><span class="go">View editors →</span></a>
-  <a class="sub" href="mailto:${esc(S.email)}" style="--a:#f472b6"><b>Email us</b><small>${esc(S.email)}</small><span class="go">Write an email →</span></a></div></div></div>`;
- $("#cf").addEventListener("submit",submit)}
-
-/* live data from the Showcase backend (public, read-only) */
-async function loadShowcase(){const el=$("#scs");if(!el)return;let o=null;try{const r=await fetch("/api/sync");if(r.ok)o=(await r.json()).data}catch(_){}
- const st=(o&&o.settings&&o.settings.main)||{},open=st.open??true,eds=Object.keys((o&&o.editors)||{}).length;
- if(!o)return;
- el.innerHTML=`<span class="chip${open?"":" s"}">${open?"● Commissions open"+(st.slots?" · "+st.slots+" slots left":""):"● Commissions closed"}</span>${eds?`<span class="chip">${eds} editor${eds>1?"s":""}</span>`:""}`}
-async function submit(e){e.preventDefault();const f=e.currentTarget,b=$("#send"),m=$("#cm"),fd=new FormData(f);if(fd.get("_gotcha"))return;
- b.disabled=true;b.textContent="Sending…";m.textContent="";
- try{const r=await fetch(S.formEndpoint,{method:"POST",headers:{Accept:"application/json"},body:fd});if(!r.ok)throw 0;f.reset();m.style.color="var(--ok)";m.textContent="Request sent. We'll reply by email with a quote."}
- catch(_){m.style.color="#fb7185";m.textContent="The request didn't send. Check your connection and retry, or email "+S.email+"."}
- b.disabled=false;b.textContent="Send request"}
 
 function store(k){
  const M=STORES[k],all=S.stores[k],tags=["All",...new Set(all.flatMap(p=>p.tags||[]))];let tag="All",q="",sort="featured";
  app.innerHTML=`<div class="wrap"><div class="sh" style="display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap"><div><h1>${M.em} ${M.s}</h1><p class="mu">${M.b}</p></div>${OWNER?'<button class="btn sm" id="addp">+ Add listing</button>':""}</div>
  ${all.length?`<div class="tools"><input id="q" type="search" placeholder="Search ${M.s.toLowerCase()}" aria-label="Search"><select id="so" aria-label="Sort"><option value="featured">Featured</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="az">Name A–Z</option></select><div id="tg" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
- <p class="mu" id="cnt" aria-live="polite"></p><div class="grid" id="gr"></div>`:`<div class="soon"><img src="${LOGO}" alt=""><h2>Coming soon</h2><p class="mu">${M.s} are on the way. Need something now? Commission a custom build.</p><a class="btn" href="#/commission">Request a commission</a></div>`}</div>`;
+ <p class="mu" id="cnt" aria-live="polite"></p><div class="grid" id="gr"></div>`:`<div class="soon"><img src="${LOGO}" alt=""><h2>Coming soon</h2><p class="mu">${M.s} are on the way. Need something now? Commission a custom build.</p><a class="btn" href="/commission/#request">Request a commission</a></div>`}</div>`;
  $("#addp")?.addEventListener("click",()=>editProduct(k,{id:uid(),n:"",price:0,tags:[],link:"",d:"",img:""},true));
  if(!all.length)return;
  const draw=()=>{
@@ -297,27 +264,15 @@ function store(k){
  draw()}
 
 /* footer: the Premiere / affiliation note belongs to the animations store only */
-function footer(k){$("#ft").innerHTML=`<div class="wrap"><span>${k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"© Helix Studio"}</span><span><a href="#/store">Store</a> · <a href="/showcase/">Showcase</a> · <a href="#/faq">FAQ</a> · <a href="#/commission">Commission</a> · <a href="#/admin">Owner</a></span></div>`}
+function footer(k){window.Helix&&Helix.setNote(k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"\u00a9 Helix Studio. Not affiliated with Mojang or Microsoft.")}
 
 /* routing */
-const DEFAULT_FAQ=[
- {id:"f1",q:"What do I get when I buy a template?",a:"A Premiere Pro .mogrt file. You buy through Payhip and download it from there after checkout."},
- {id:"f2",q:"What software do I need?",a:"Adobe Premiere Pro. The templates are Motion Graphics templates (.mogrt) that you use from the Essential Graphics panel."},
- {id:"f3",q:"How do I install a .mogrt template?",a:"In Premiere Pro, open the Essential Graphics panel and go to the Browse tab. Click the Install Motion Graphics template button at the bottom right and pick the .mogrt file. Then drag it onto your timeline."},
- {id:"f4",q:"Can I use these in other editors?",a:"No. They are made for Adobe Premiere Pro and are not designed for other video editors."},
- {id:"f5",q:"Can you build something custom for me?",a:"Yes. Send a request with the Commission form and we will reply by email with a quote."},
- {id:"f7",q:"What is the Showcase?",a:"The Helix Showcase is our portfolio of thumbnails and animations. Sign in there to commission one of our editors directly, chat with them and get your files."},
- {id:"f6",q:"Are you affiliated with Mojang or Microsoft?",a:"No. Helix is an independent studio and is not affiliated with Mojang or Microsoft."}];
-function initFaq(){if(!Array.isArray(S.faq))S.faq=DEFAULT_FAQ.map(x=>({...x}))}
-function faq(){
- app.innerHTML=`<div class="wrap"><div class="sh" style="display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap"><div><h1>FAQ</h1><p class="mu">Answers to common questions about our templates. Can't find yours? Use the Commission form or email us.</p></div>${OWNER?'<button class="btn sm" id="addf">+ Add question</button>':""}</div>
- <div class="faq">${S.faq.length?S.faq.map(f=>`<details class="fq"><summary>${esc(f.q)}</summary><div class="ans">${String(f.a||"").split(/\n+/).map(t=>`<p>${esc(t)}</p>`).join("")}${OWNER?`<button class="ib" data-ef="${esc(f.id)}">Edit</button>`:""}</div></details>`).join(""):'<div class="empty">No questions yet.</div>'}</div></div>`;
- $("#addf")?.addEventListener("click",()=>editFaq({id:uid(),q:"",a:""},true));
- app.querySelectorAll("[data-ef]").forEach(b=>b.onclick=()=>editFaq(S.faq.find(x=>x.id===b.dataset.ef)))}
-function editFaq(f,isNew){if(!f)return;form(isNew?"Add question":"Edit question",[{k:"q",l:"Question"},{k:"a",l:"Answer (blank line = new paragraph)",t:"area"}],f,v=>{if(!v.q)v.q="Untitled question";if(isNew)S.faq.push(v)},isNew?null:()=>{S.faq=S.faq.filter(x=>x.id!==f.id)})}
-function route(){if(!S)return;const h=location.hash.replace(/^#\/?/,""),[a,b]=h.split("/"),k=a==="store"&&STORES[b]?b:null;
- a==="faq"?faq():a==="commission"?commission():a==="store"&&!k?storeHub():k?store(k):home();footer(k);
- document.querySelectorAll("nav a[data-r]").forEach(l=>l.dataset.r===(a==="faq"?"faq":a==="commission"?"commission":a==="store"?"store":null)?l.setAttribute("aria-current","page"):l.removeAttribute("aria-current"));
+function initFaq(){}
+function route(){if(!S)return;const h=location.hash.replace(/^#\/?/,""),[a,b]=h.split("/");
+ if(a==="faq")return location.replace("/faq/");if(a==="commission")return location.replace("/commission/#request");
+ if(a==="store"&&!STORES[b])return location.replace("#/store/animations");
+ const k=a==="store"?b:null;k?store(k):home();footer(k);
+ window.Helix&&Helix.setSection(k?"store":"home",k||"");
  scrollTo(0,0);
  if(a==="admin")admin()}
 addEventListener("hashchange",route);
@@ -326,16 +281,10 @@ document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{i
 
 /* announcement bar */
 let annT;
-function ann(){clearInterval(annT);const B=S.banner,bar=$("#ann");bar.hidden=!sale();if(!sale())return;
- $("#at").textContent=B.badge;$("#am").textContent=B.text;$("#ac").textContent=B.code;
- const tick=()=>{const end=Date.parse(B.endsAt);if(Date.now()>=end){clearInterval(annT);bar.hidden=true;route();return}
-  let s=Math.floor((end-Date.now())/1e3);const d=Math.floor(s/86400);s%=86400;const p=n=>String(n).padStart(2,"0");
-  $("#cd").textContent=(d?d+"d ":"")+p(Math.floor(s/3600))+":"+p(Math.floor(s%3600/60))+":"+p(s%60)};
- tick();annT=setInterval(tick,1000);
- $("#ac").onclick=async()=>{try{await navigator.clipboard.writeText(B.code);$("#ac").textContent="Copied"}catch(_){$("#ac").textContent="Select & copy: "+B.code}setTimeout(()=>$("#ac").textContent=B.code,1800)};
- $("#ax").onclick=()=>{bar.hidden=true}}
+function ann(){clearInterval(annT);const B=S.banner;const on=sale();window.Helix&&Helix.setBanner(on?B:null);
+ if(on){const ms=Date.parse(B.endsAt)-Date.now();if(ms>0&&ms<2147e6)annT=setTimeout(()=>{window.Helix&&Helix.setBanner(null);route()},ms+300)}}
 
-/* ===================== OWNER MODE (only visible to the page owner) ===================== */
+ /* ===================== OWNER MODE (only visible to the page owner) ===================== */
 const readImg=(file,max)=>new Promise((ok,no)=>{const r=new FileReader;r.onload=()=>{const im=new Image;im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok(c.toDataURL("image/webp",.85))};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)});
 const loc=iso=>{const d=new Date(iso);if(isNaN(d))return"";d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16)};
 /* fields: {k,l,t:text|number|area|check|img|dt|tags, full} ; v: object edited in place on save */
