@@ -166,7 +166,7 @@ a.pil:hover{background:linear-gradient(160deg,color-mix(in srgb,var(--a) 26%,tra
 </head>
 <body>
 <script src="/shell.js" data-section="home"></script>
-<script src="/home-default.js"></script><script src="/faq-seed.js"></script>
+<link rel="stylesheet" href="/store.css"><script src="/home-default.js"></script><script src="/store-default.js"></script><script src="/store-model.js"></script><script src="/faq-seed.js"></script>
 <main id="app"></main>
 <dialog id="dlg" aria-label="Product preview"></dialog>
 <dialog id="ed" aria-label="Edit"></dialog>
@@ -179,47 +179,27 @@ const $=(s,r=document)=>r.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/
 const slug=n=>n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""),uid=()=>Math.random().toString(36).slice(2,9);
 const money=n=>"$"+(+(+n).toFixed(2)),LOGO="/images/logo.webp";
 const ap=n=>{n=Math.floor(n);if(n<10)return String(n);const m=10**(String(n).length-1);return Math.floor(n/m)*m+"+"};
-const sale=()=>S.banner.enabled&&Date.now()<Date.parse(S.banner.endsAt);
-const disc=p=>sale()?+(p*(1-S.banner.pct/100)).toFixed(2):+p;
-const priceHtml=p=>`<span class="price"><b>${p>0?money(disc(p)):"Free"}</b>${sale()&&p>0?`<s>${money(p)}</s>`:""}</span>`;
-const COL={Text:["#1f6b43","#0f2a3d"],Objects:["#8a5415","#2a1646"],UI:["#1f4f9a","#241a5a"],Scenes:["#8a2f56","#1b1a4a"],builds:["#1f6b43","#0f2a3d"],plugins:["#1f4f9a","#241a5a"]};
+const sale=()=>S.banner.enabled&&S.banner.confirmed&&Date.now()<Date.parse(S.banner.endsAt);
 const STORES={
  animations:{em:"🎬",t:"3D Animation & Motion Assets",s:"Animations",b:"MOGRTs, lower thirds and renders for Premiere Pro. Hover a card to preview it.",g:"Templates for Premiere Pro, sold singly or as collections."},
  builds:{em:"🗺️",t:"Minecraft Builds & Schematics",s:"Builds",b:"Spawns, arenas and custom maps ready to paste into your world.",g:"Spawns, arenas and custom maps."},
  plugins:{em:"⚙️",t:"Minecraft Plugins & Modules",s:"Plugins",b:"Event engines, systems and Skripts for your server.",g:"Event engines, systems and Skripts."}};
 const app=$("#app"),tpls=()=>S.stores.animations.filter(p=>!p.coll);
-function stats(p){const g=tpls().filter(x=>(p.cats||[]).includes(x.cat));return{cnt:g.length,tot:g.reduce((a,x)=>a+ +x.price,0)}}
-const desc=p=>p.coll&&!p.d?(()=>{const t=stats(p);return `${t.cnt} templates for ${money(p.price)} instead of ${money(t.tot)}.`})():p.d||"";
-const buyBtn=(p,c="")=>p.link?`<a class="btn ${c}" href="${esc(p.link)}" target="_blank" rel="noopener">Buy now</a>`:`<span class="btn off ${c}">Coming soon</span>`;
-const colors=(p,k)=>k==="animations"?COL[p.tags?.[0]]||COL.Text:COL[k];
-
-function card(p,k){
- const [c1,c2]=colors(p,k),s=slug(p.n);
- const media=p.img?`<img src="${esc(src(p.img))}" alt="${esc(p.n)} cover" loading="lazy">`:`<div class="ph">${esc((p.n||"?").split(/\s+/).slice(0,2).map(w=>w[0]).join(""))}</div>${k==="animations"?`<img src="thumbs/${s}.png" alt="" loading="lazy" onerror="this.remove()"><video src="previews/${s}.mp4" muted loop playsinline preload="none" onerror="this.remove()"></video>`:""}`;
- return `<article class="card"><button class="thumb" style="--c1:${c1};--c2:${c2}" data-pv="${k}|${p.id}" aria-label="Quick preview: ${esc(p.n)}"><span class="bd">${p.new?'<span>New</span>':""}${p.popular?'<span>Popular</span>':""}${p.best?'<span class="best">Best value</span>':""}${sale()?'<span class="sale">On sale</span>':""}</span>${media}<span class="pv">Quick preview</span></button>
- ${OWNER?`<div class="adm"><button class="ib" data-ep="${k}|${p.id}">Edit</button></div>`:""}
- <div class="cb"><h3>${esc(p.n)}</h3><small>${esc((p.tags||[]).join(" · "))}${p.size?" · "+esc(p.size):""}</small>
- <div class="buy">${priceHtml(+p.price)}${buyBtn(p,"sm")}</div></div></article>`}
-
-
 /* ===== Home page: typed sections from the owner's config (draft/published) ===== */
 let HT=0;
-const HLINKS={store:"#/store/animations",showcase:"/showcase/#thumbnails",faq:"/faq/",commission:"/commission/#request"};
+const HLINKS={store:"/store",showcase:"/showcase/#thumbnails",faq:"/faq/",commission:"/commission/#request"};
 const HLABEL={store:"Open the Store",showcase:"Open the Showcase",faq:"Read the FAQ",commission:"Start a request"};
-const allProducts=()=>Object.entries(S.stores).flatMap(([k,a])=>a.map(p=>({p,k})));
-function featuredPick(sec){const all=allProducts().filter(x=>x.p.n),by=new Map(all.map(x=>[x.p.id,x]));
- let list=(sec.ids||[]).map(i=>by.get(i)).filter(Boolean);
- if(!list.length){const rank=x=>x.p.best?0:x.p.popular?1:x.p.new?2:x.p.coll?3:4;list=[...all].sort((a,b)=>rank(a)-rank(b)).filter(x=>x.p.price>0||x.p.link)}
- return list.slice(0,sec.count||4)}
+function featuredPick(sec,M){const n=sec.count||4;let l=(sec.ids||[]).map(i=>M.products.find(p=>p.id===i)).filter(Boolean);
+ if(!l.length){l=HXS.featuredOf(M.products,n);for(const p of HXS.recentOf(M.products,n))if(l.length<n&&!l.includes(p))l.push(p)}return l.slice(0,n)}
 async function homeData(){const t=localStorage.getItem("helix_tok");let d={};try{const r=await fetch("/api/sync",{headers:t?{authorization:"Bearer "+t}:{}});if(r.ok)d=(await r.json()).data||{}}catch(_){}return d}
 const HSEC={
- hero(sec,D){const pick=featuredPick({count:3}).filter(x=>x.p.img);
+ hero(sec,D,M){const pick=featuredPick({count:3},M).filter(p=>p.images[0]).map(p=>({p:{img:p.images[0]}}));
   return `<div class="wrap"><section class="hero"><div><h1>${esc(sec.title)}</h1>${sec.text?`<p class="lead">${esc(sec.text)}</p>`:""}<div class="cta">${sec.pLabel?`<a class="btn" href="${HLINKS[sec.pLink]||"#/"}">${esc(sec.pLabel)}</a>`:""}${sec.sLabel?`<a class="btn ghost" href="${HLINKS[sec.sLink]||"#/"}">${esc(sec.sLabel)}</a>`:""}</div></div>
-  ${pick.length?`<div class="hv" aria-hidden="true">${pick.map((x,i)=>`<img src="${esc(src(x.p.img))}" alt="" style="--i:${i}">`).join("")}</div>`:""}</section></div>`},
+  ${pick.length?`<div class="hv" aria-hidden="true">${pick.map((x,i)=>`<img src="${esc(x.p.img)}" alt="" style="--i:${i}">`).join("")}</div>`:""}</section></div>`},
  cards(sec){return `<section class="blk"><div class="wrap">${sec.title?`<div class="hd"><h2>${esc(sec.title)}</h2></div>`:""}<div class="pillars">${(sec.items||[]).map((it,i)=>{const cls={store:"store",showcase:"show",faq:"fqa",commission:"comm"}[it.k],col={store:"var(--cy)",showcase:"var(--vi)",faq:"#facc15",commission:"#f472b6"}[it.k];
    return `<a class="pil ${cls}" href="${HLINKS[it.k]}" style="--a:${col}"><span class="num">0${i+1}</span><h2>${esc(it.t||it.k)}</h2><p>${esc(it.d)}</p><span class="go2">${HLABEL[it.k]} →</span></a>`}).join("")}</div></div></section>`},
- featured(sec){const l=featuredPick(sec);if(!l.length)return "";
-  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Featured")}</h2><a class="more" href="#/store/animations">View the Store →</a></div>${sec.text?`<p class="mu">${esc(sec.text)}</p>`:""}<div class="grid">${l.map(x=>card(x.p,x.k)).join("")}</div></div></section>`},
+ featured(sec,D,M){const l=featuredPick(sec,M);if(!l.length)return "";
+  return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Featured")}</h2><a class="more" href="/store">View the Store →</a></div>${sec.text?`<p class="mu">${esc(sec.text)}</p>`:""}<div class="pgrid">${l.map(p=>HXS.card(p,M.cats)).join("")}</div></div></section>`},
  showcase(sec,D){const ws=Object.values(D.works||{}).flatMap(d=>d.items||[]).sort((a,b)=>(b.at||0)-(a.at||0)).slice(0,sec.count||3);if(!ws.length)return "";
   return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Showcase")}</h2><a class="more" href="/showcase/#thumbnails">Open the Showcase →</a></div>${sec.text?`<p class="mu">${esc(sec.text)}</p>`:""}<div class="wkg">${ws.map(w=>`<a class="wk" href="/showcase/#${w.cat==="thumbnails"?"thumbnails":"montage"}" style="--h:${+w.h||200}"><span class="wt">${esc(w.t)}</span><small>${w.cat==="thumbnails"?"Thumbnail":"Montage"}${w.d?" · "+esc(w.d):""}</small></a>`).join("")}</div></div></section>`},
  commission(sec,D){const st=(D.settings&&D.settings.main)||{},open=st.open??true;
@@ -229,39 +209,12 @@ const HSEC={
  creators(sec){if(!S.creators.length&&!OWNER)return "";
   return `<section class="blk"><div class="wrap"><div class="hd"><h2>${esc(sec.title||"Creators")}</h2>${OWNER?'<button class="ib" id="addc">+ Add creator</button>':""}</div>${S.creators.length?`<div class="crow">${S.creators.map(c=>`<div class="cw"><a class="cc" href="${esc(c.url||"#")}" target="_blank" rel="noopener"><span class="av">${c.avatar?`<img src="${esc(src(c.avatar))}" alt="">`:esc((c.name||"?")[0])}</span><span><b>${esc(c.name)}</b><small>${esc(c.subs)} subscribers</small></span></a>${OWNER?`<div class="adm"><button class="ib" data-ec="${c.id}">Edit</button></div>`:""}</div>`).join("")}</div>`:'<p class="mu">No creators yet.</p>'}</div></section>`}};
 async function home(){const my=++HT;app.innerHTML='<div class="wrap"><p class="mu" style="padding:60px 0">Loading…</p></div>';
- const D=await homeData();if(my!==HT)return;
+ const [D,M]=await Promise.all([homeData(),HXS.load()]);if(my!==HT)return;
  const prev=new URLSearchParams(location.search).get("preview")==="1",H=D.home||{};
  const cfg=(prev&&H.draft)||H.published||window.HX_HOME_DEFAULT;
- app.innerHTML=(prev?`<div class="pvb">${H.draft?"Previewing your unpublished draft. Visitors still see the published page.":"No saved draft yet, showing the live page."} <a href="/admin/#home">Back to editor</a></div>`:"")+cfg.sections.filter(x=>x.on&&HSEC[x.type]).map(x=>HSEC[x.type](x,D)).join("");
+ app.innerHTML=(prev?`<div class="pvb">${H.draft?"Previewing your unpublished draft. Visitors still see the published page.":"No saved draft yet, showing the live page."} <a href="/admin/#home">Back to editor</a></div>`:"")+cfg.sections.filter(x=>x.on&&HSEC[x.type]).map(x=>HSEC[x.type](x,D,M)).join("");
  $("#addc")?.addEventListener("click",()=>editCreator({id:uid(),name:"",subs:"",url:"",avatar:""},true));
  app.querySelectorAll("[data-ec]").forEach(b=>b.onclick=()=>editCreator(S.creators.find(c=>c.id===b.dataset.ec)))}
-
-function store(k){
- const M=STORES[k],all=S.stores[k],tags=["All",...new Set(all.flatMap(p=>p.tags||[]))];let tag="All",q="",sort="featured";
- app.innerHTML=`<div class="wrap"><div class="sh" style="display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap"><div><h1>${M.em} ${M.s}</h1><p class="mu">${M.b}</p></div>${OWNER?'<button class="btn sm" id="addp">+ Add listing</button>':""}</div>
- ${all.length?`<div class="tools"><input id="q" type="search" placeholder="Search ${M.s.toLowerCase()}" aria-label="Search"><select id="so" aria-label="Sort"><option value="featured">Featured</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option><option value="az">Name A–Z</option></select><div id="tg" style="display:flex;gap:8px;flex-wrap:wrap"></div></div>
- <p class="mu" id="cnt" aria-live="polite"></p><div class="grid" id="gr"></div>`:`<div class="soon"><img src="${LOGO}" alt=""><h2>Coming soon</h2><p class="mu">${M.s} are on the way. Need something now? Commission a custom build.</p><a class="btn" href="/commission/#request">Request a commission</a></div>`}</div>`;
- $("#addp")?.addEventListener("click",()=>editProduct(k,{id:uid(),n:"",price:0,tags:[],link:"",d:"",img:""},true));
- if(!all.length)return;
- const draw=()=>{
-  $("#tg").innerHTML=tags.map(t=>`<button class="pill" aria-pressed="${t===tag}" data-t="${esc(t)}">${esc(t)}</button>`).join("");
-  let l=all.filter(p=>(tag==="All"||(p.tags||[]).includes(tag))&&p.n.toLowerCase().includes(q));
-  if(sort==="lo")l=[...l].sort((a,b)=>a.price-b.price);if(sort==="hi")l=[...l].sort((a,b)=>b.price-a.price);if(sort==="az")l=[...l].sort((a,b)=>a.n.localeCompare(b.n));
-  if(sort==="featured")l=[...l].sort((a,b)=>(b.coll?1:0)-(a.coll?1:0));
-  $("#cnt").textContent=l.length+" "+(l.length===1?"listing":"listings");
-  $("#gr").innerHTML=l.length?l.map(p=>card(p,k)).join(""):`<div class="empty">No listings match "${esc(q)}". Clear the search or pick another filter.</div>`};
- $("#tg").addEventListener("click",e=>{const b=e.target.closest("button");if(b){tag=b.dataset.t;draw()}});
- $("#q").addEventListener("input",e=>{q=e.target.value.trim().toLowerCase();draw()});$("#so").addEventListener("change",e=>{sort=e.target.value;draw()});
- const g=$("#gr"),pl=(e,go)=>{const v=e.target.closest(".card")?.querySelector("video");if(v)go?v.play().catch(()=>{}):(v.pause(),v.currentTime=0)};
- g.addEventListener("pointerover",e=>pl(e,1));g.addEventListener("pointerout",e=>pl(e,0));g.addEventListener("focusin",e=>pl(e,1));
- g.addEventListener("click",e=>{
-  const ed=e.target.closest("[data-ep]");if(ed){const[kk,id]=ed.dataset.ep.split("|");return editProduct(kk,S.stores[kk].find(x=>x.id===id))}
-  const b=e.target.closest("[data-pv]");if(!b)return;const[kk,id]=b.dataset.pv.split("|"),p=S.stores[kk].find(x=>x.id===id),[c1,c2]=colors(p,kk),s=slug(p.n);
-  $("#dlg").innerHTML=`<div class="thumb" style="--c1:${c1};--c2:${c2}">${p.img?`<img src="${esc(src(p.img))}" alt="${esc(p.n)}">`:`<div class="ph">${esc(p.n[0]||"?")}</div>${kk==="animations"?`<video src="previews/${s}.mp4" autoplay muted loop playsinline onerror="this.remove()"></video>`:""}`}</div>
-  <div class="bodyd"><h2>${esc(p.n)}</h2><p class="mu">${esc(desc(p))}</p><p><small class="mu">${esc((p.tags||[]).join(" · "))}${kk==="animations"?" · Works with Adobe Premiere Pro":""}</small></p>
-  <div class="row">${priceHtml(+p.price)}<span style="display:flex;gap:8px"><button class="btn ghost" id="xc">Close</button>${buyBtn(p)}</span></div></div>`;
-  $("#dlg").showModal();$("#xc").onclick=()=>$("#dlg").close()});
- draw()}
 
 /* footer: the Premiere / affiliation note belongs to the animations store only */
 function footer(k){window.Helix&&Helix.setNote(k==="animations"?"Works with Adobe Premiere Pro (Essential Graphics). Not affiliated with Mojang or Microsoft.":"\u00a9 Helix Studio. Not affiliated with Mojang or Microsoft.")}
@@ -270,9 +223,9 @@ function footer(k){window.Helix&&Helix.setNote(k==="animations"?"Works with Adob
 function initFaq(){}
 function route(){if(!S)return;const h=location.hash.replace(/^#\/?/,""),[a,b]=h.split("/");
  if(a==="faq")return location.replace("/faq/");if(a==="commission")return location.replace("/commission/#request");
- if(a==="store"&&!STORES[b])return location.replace("#/store/animations");
- const k=a==="store"?b:null;k?store(k):home();footer(k);
- window.Helix&&Helix.setSection(k?"store":"home",k||"");
+ if(a==="store")return location.replace("/store"+(b?"/"+b:""));
+ home();footer(null);
+ window.Helix&&Helix.setSection("home","");
  scrollTo(0,0);
  if(a==="admin")admin()}
 addEventListener("hashchange",route);
@@ -314,12 +267,10 @@ function form(title,fields,v,save,del){
   save(v);d.close();touch()};
  d.showModal()}
 function touch(){dirty++;ownBar();ann();route()}
-const PF=[{k:"n",l:"Name"},{k:"price",l:"Price (USD, 0 = free)",t:"number",full:false},{k:"size",l:"File size (optional)",full:false},{k:"tags",l:"Tags (comma separated)",t:"tags"},{k:"link",l:"Purchase link (Payhip or other URL)"},{k:"d",l:"Description",t:"area"},{k:"img",l:"Thumbnail image",t:"img"},{k:"new",l:"Badge: New",t:"check",full:false},{k:"popular",l:"Badge: Popular",t:"check",full:false},{k:"best",l:"Badge: Best value",t:"check",full:false}];
-function editProduct(k,p,isNew){if(!p)return;form(isNew?"Add listing":"Edit listing",PF,p,v=>{if(!v.n)v.n="Untitled";if(isNew)S.stores[k].push(v)},isNew?null:()=>{S.stores[k]=S.stores[k].filter(x=>x.id!==p.id)})}
 function editCreator(c,isNew){if(!c)return;form(isNew?"Add creator":"Edit creator",[{k:"name",l:"Creator name"},{k:"subs",l:"Subscribers (e.g. 120K)"},{k:"url",l:"Channel link"},{k:"avatar",l:"Avatar",t:"img"}],c,v=>{if(isNew)S.creators.push(v)},isNew?null:()=>{S.creators=S.creators.filter(x=>x.id!==c.id)})}
-function settings(){const o={...S.banner,discordUrl:S.discordUrl,email:S.email,formEndpoint:S.formEndpoint};
- form("Site settings",[{k:"enabled",l:"Show announcement bar",t:"check"},{k:"badge",l:"Badge text",full:false},{k:"code",l:"Coupon code",full:false},{k:"text",l:"Announcement text"},{k:"pct",l:"Discount shown on prices (%)",t:"number",full:false},{k:"endsAt",l:"Offer ends",t:"dt",full:false},{k:"discordUrl",l:"Discord invite link (leave empty to hide)"},{k:"email",l:"Contact email",full:false},{k:"formEndpoint",l:"Commission form endpoint (Formspree)",full:false}],o,v=>{
-  S.banner={enabled:!!v.enabled,badge:v.badge,text:v.text,code:v.code,pct:Math.min(90,v.pct),endsAt:v.endsAt};S.discordUrl=v.discordUrl;S.email=v.email;S.formEndpoint=v.formEndpoint})}
+function settings(){const o={...S.banner,confirmed:!!S.banner.confirmed,discordUrl:S.discordUrl,email:S.email,formEndpoint:S.formEndpoint};
+ form("Site settings",[{k:"enabled",l:"Show announcement bar",t:"check"},{k:"confirmed",l:"I created this code in Payhip and it works at checkout",t:"check"},{k:"badge",l:"Badge text",full:false},{k:"code",l:"Coupon code",full:false},{k:"text",l:"Announcement text"},{k:"pct",l:"Discount shown on prices (%)",t:"number",full:false},{k:"endsAt",l:"Offer ends",t:"dt",full:false},{k:"discordUrl",l:"Discord invite link (leave empty to hide)"},{k:"email",l:"Contact email",full:false},{k:"formEndpoint",l:"Commission form endpoint (Formspree)",full:false}],o,v=>{
+  S.banner={enabled:!!v.enabled,confirmed:!!v.confirmed,badge:v.badge,text:v.text,code:v.code,pct:Math.min(90,v.pct),endsAt:v.endsAt};S.discordUrl=v.discordUrl;S.email=v.email;S.formEndpoint=v.formEndpoint})}
 /* ===================== OWNER MODE: /#/admin, saves to GitHub ===================== */
 const KEY="helix_gh";let VIA=null;
 const GT=()=>{try{return localStorage.getItem("helix_tok")}catch(_){return null}};
@@ -384,7 +335,7 @@ async function publish(){const b=$("#pub");b.disabled=true;b.textContent="Publis
   dirty=0;note="Published. The live site updates in about a minute.";ownBar()}
  catch(e){ownBar();alert("Publishing failed. "+ghError(e))}}
 
-function ownBar(){let o=$("#own");if(!o){o=document.createElement("div");o.id="own";o.setAttribute("role","region");o.setAttribute("aria-label","Owner tools");document.body.append(o);$("#ft").style.paddingBottom="90px"}
+function ownBar(){let o=$("#own");if(!o){o=document.createElement("div");o.id="own";o.setAttribute("role","region");o.setAttribute("aria-label","Owner tools");document.body.append(o);document.body.style.paddingBottom="90px"}
  o.innerHTML=`<b>Owner mode</b><button class="btn ghost sm" id="set">Site settings</button><span class="mu" style="font-size:.85rem">${dirty?dirty+" unpublished change"+(dirty>1?"s":""):esc(note||"No changes")}</span>${dirty?'<button class="btn sm" id="pub">Publish changes</button><button class="btn ghost sm" id="dis">Discard</button>':""}<button class="btn ghost sm" id="out">Sign out</button>`;
  $("#set").onclick=settings;$("#pub")?.addEventListener("click",publish);$("#dis")?.addEventListener("click",()=>{dirty=0;location.reload()});
  $("#out").onclick=()=>{if(dirty&&!confirm("You have unpublished changes. Sign out and lose them?"))return;dirty=0;setCreds(null);try{localStorage.removeItem("helix_tok")}catch(_){}location.reload()}}
