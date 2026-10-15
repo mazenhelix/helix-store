@@ -13,8 +13,22 @@ async function google(e,tok){const[h,p,s]=tok.split('.'),hd=JSON.parse(dec.decod
  const c=JSON.parse(dec.decode(unb(p)));
  return c.aud===e.GOOGLE_CLIENT_ID&&/^(https:\/\/)?accounts\.google\.com$/.test(c.iss)&&c.exp>Date.now()/1e3&&c.email_verified?c:null}
 
-const PUB=new Set(['editors','works','profiles','settings','reviews']),COLS=['editors','works','profiles','settings','reviews','commissions','applications','inbox','chats'];
-const filt=(d,uid,mine)=>{const o={};for(const f of['m','dl','rev']){o[f]={};for(const[k,v]of Object.entries(d[f]||{})){const[c,ed]=k.split(':');if(mine.has(c)||ed===uid)o[f][k]=v}}return o};
+const PUB=new Set(['editors','works','profiles','settings','reviews','faq','sellers']),COLS=['editors','works','profiles','settings','reviews','faq','sellers','home','homerev','commissions','applications','sellerapps','support','inbox','chats'];
+const filt=(d,uid,mine,owner)=>{const o={};for(const f of['m','dl','rev']){o[f]={};for(const[k,v]of Object.entries(d[f]||{})){const[c,ed]=k.split(':');if(mine.has(c)||ed===uid||(owner&&c.startsWith('sup_')))o[f][k]=v}}return o};
+
+/* Home page config: typed sections only. Everything is rebuilt from a whitelist, so no HTML, scripts or unknown keys are ever stored. */
+const HL=['store','showcase','faq','commission'];
+const S_=(v,n)=>typeof v==='string'?v.replace(/[\u0000-\u001f<>]/g,' ').trim().slice(0,n):'';
+const N_=(v,a,b,d)=>{v=Math.round(+v);return Number.isFinite(v)?Math.min(b,Math.max(a,v)):d};
+const HT={
+ hero:s=>({title:S_(s.title,160),text:S_(s.text,300),pLabel:S_(s.pLabel,30),pLink:HL.includes(s.pLink)?s.pLink:'store',sLabel:S_(s.sLabel,30),sLink:HL.includes(s.sLink)?s.sLink:'showcase'}),
+ cards:s=>({title:S_(s.title,80),items:HL.map(k=>{const i=(Array.isArray(s.items)?s.items:[]).find(x=>x&&x.k===k)||{};return{k,t:S_(i.t,40),d:S_(i.d,140)}})}),
+ featured:s=>({title:S_(s.title,80),text:S_(s.text,160),count:N_(s.count,1,6,4),ids:(Array.isArray(s.ids)?s.ids:[]).slice(0,6).map(x=>S_(x,64)).filter(Boolean)}),
+ showcase:s=>({title:S_(s.title,80),text:S_(s.text,160),count:N_(s.count,1,6,3)}),
+ commission:s=>({title:S_(s.title,80),text:S_(s.text,300),label:S_(s.label,30)}),
+ faq:s=>({title:S_(s.title,80),count:N_(s.count,1,6,4)}),
+ creators:s=>({title:S_(s.title,80)})};
+function cleanHome(d){if(!d||!Array.isArray(d.sections)||d.sections.length>24)return null;const out=[];for(const s of d.sections){if(!s||!HT[s.type])return null;out.push({id:S_(s.id,24)||'s'+out.length,type:s.type,on:!!s.on,...HT[s.type](s)})}return{sections:out,at:Date.now()}}
 
 async function sync(e,u,v){
  const ver=(await e.DB.prepare("SELECT v FROM meta WHERE k='version'").first())?.v||1;
@@ -23,12 +37,14 @@ async function sync(e,u,v){
  const staff=u&&(u.owner||rows.some(r=>r.col==='editors'&&r.id===u.id)),mine=new Set();
  const mc=u&&rows.find(r=>r.col==='commissions'&&r.id===u.id);if(mc)try{JSON.parse(mc.data).items.forEach(c=>mine.add(c.id))}catch{}
  for(const r of rows){let d;try{d=JSON.parse(r.data)}catch{continue}const c=r.col,own=u&&r.id===u.id;
-  if(PUB.has(c))out[c][r.id]=d;
+  if(c==='home'){if(r.id==='published'||(u&&u.owner))out[c][r.id]=d}
+  else if(PUB.has(c))out[c][r.id]=d;
   else if(!u)continue;
+  else if(c==='homerev'){if(u.owner)out[c][r.id]=d}
   else if(c==='commissions'){if(own||staff)out[c][r.id]=d}
-  else if(c==='applications'){if(own||u.owner)out[c][r.id]=d}
+  else if(c==='applications'||c==='sellerapps'||c==='support'){if(own||u.owner)out[c][r.id]=d}
   else if(c==='inbox')out[c][r.id]=d;
-  else if(c==='chats')out[c][r.id]=own?d:filt(d,u.id,mine)}
+  else if(c==='chats')out[c][r.id]=own?d:filt(d,u.id,mine,u.owner)}
  return J({v:ver,data:out})}
 
 async function write(e,u,col,id,req,del){
@@ -37,8 +53,12 @@ async function write(e,u,col,id,req,del){
  const own=id===u.id,isEd=u.owner||!!(await e.DB.prepare("SELECT 1 FROM docs WHERE col='editors' AND id=?").bind(u.id).first());
  let data=null,ok=false;
  if(!del){const t=await req.text();if(t.length>100000)return J({error:'too large'},413);try{data=JSON.parse(t)}catch{return J({error:'bad json'},400)}}
- if(col==='editors'||col==='settings')ok=u.owner;
- else if(col==='applications')ok=u.owner||(own&&!del&&data.status==='pending');
+ if(col==='home'&&!['draft','published'].includes(id))return J({error:'bad'},400);
+ if(col==='homerev'&&!/^r\d{10,14}$/.test(id))return J({error:'bad'},400);
+ if(col==='home'||col==='homerev'){ok=u.owner;if(ok&&!del){data=cleanHome(data);if(!data)return J({error:'invalid home config'},400)}}
+ else if(col==='editors'||col==='settings'||col==='faq'||col==='sellers')ok=u.owner;
+ else if(col==='applications'||col==='sellerapps')ok=u.owner||(own&&!del&&data.status==='pending');
+ else if(col==='support')ok=own||u.owner;
  else if(col==='works'||col==='inbox')ok=own&&isEd;
  else ok=own;
  if(!ok)return J({error:'forbidden'},403);
